@@ -41,6 +41,6 @@ export class IncidentsController {
     @Param('id') incidentId: string,
     @Body('technicianId') technicianId: string,
   ) {
-    return this.incidentsService.unassignOne(incidentId, technicianId);
+    return this.service.unassignOne(incidentId, technicianId);
   }
 }
