@@ -12,22 +12,34 @@ datasource db {
   provider = "postgresql"
 }
 
-model Team {
+enum IncidentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum IncidentPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
   id        String     @id @default(uuid())
-  name      String     @unique
+  name      String
   incidents Incident[]
 }
 
 model Incident {
-  id         String   @id @default(uuid())
-  title      String
-  severity   String   // P1..P4
-  status     String   // OPEN/IN_PROGRESS/RESOLVED
-  createdAt  DateTime @default(now())
-  resolvedAt DateTime?
-  teamId     String
-  team       Team     @relation(fields: [teamId], references: [id])
+  id          String           @id @default(uuid())
+  title       String
+  description String
+  status      IncidentStatus   @default(OPEN)
+  priority    IncidentPriority @default(MEDIUM)
 
-  @@index([createdAt, status])
-  @@index([teamId, severity])
+  ownerId String?
+  owner   User? @relation(fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
