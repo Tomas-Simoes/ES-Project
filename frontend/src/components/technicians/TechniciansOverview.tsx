@@ -8,95 +8,8 @@ import {
   CheckCircle,
   AlertTriangle,
 } from "lucide-react";
-import TechnicianMetricsCard from "./TechnicianMetricsCard";
-
-// Hardcoded technician metrics data
-const techniciansMetrics = [
-  {
-    id: "t1",
-    name: "Alice Johnson",
-    email: "alice@company.com",
-    status: "busy" as const,
-    totalIncidents: 24,
-    openIncidents: 3,
-    inProgressIncidents: 5,
-    resolvedToday: 4,
-    avgResolutionTime: "2.3h",
-    workloadPercentage: 85,
-    lastActivity: "5 min ago",
-    highPriorityCount: 2,
-  },
-  {
-    id: "t2",
-    name: "Bob Smith",
-    email: "bob@company.com",
-    status: "available" as const,
-    totalIncidents: 18,
-    openIncidents: 1,
-    inProgressIncidents: 2,
-    resolvedToday: 6,
-    avgResolutionTime: "1.8h",
-    workloadPercentage: 35,
-    lastActivity: "2 min ago",
-    highPriorityCount: 0,
-  },
-  {
-    id: "t3",
-    name: "Charlie Brown",
-    email: "charlie@company.com",
-    status: "busy" as const,
-    totalIncidents: 31,
-    openIncidents: 4,
-    inProgressIncidents: 6,
-    resolvedToday: 3,
-    avgResolutionTime: "3.1h",
-    workloadPercentage: 90,
-    lastActivity: "1 min ago",
-    highPriorityCount: 3,
-  },
-  {
-    id: "t4",
-    name: "Diana Prince",
-    email: "diana@company.com",
-    status: "available" as const,
-    totalIncidents: 20,
-    openIncidents: 2,
-    inProgressIncidents: 3,
-    resolvedToday: 5,
-    avgResolutionTime: "2.0h",
-    workloadPercentage: 50,
-    lastActivity: "10 min ago",
-    highPriorityCount: 1,
-  },
-  {
-    id: "t5",
-    name: "Eve Martinez",
-    email: "eve@company.com",
-    status: "offline" as const,
-    totalIncidents: 15,
-    openIncidents: 1,
-    inProgressIncidents: 1,
-    resolvedToday: 2,
-    avgResolutionTime: "1.5h",
-    workloadPercentage: 20,
-    lastActivity: "2 hours ago",
-    highPriorityCount: 0,
-  },
-  {
-    id: "t6",
-    name: "Frank Wilson",
-    email: "frank@company.com",
-    status: "busy" as const,
-    totalIncidents: 27,
-    openIncidents: 5,
-    inProgressIncidents: 4,
-    resolvedToday: 3,
-    avgResolutionTime: "2.7h",
-    workloadPercentage: 75,
-    lastActivity: "3 min ago",
-    highPriorityCount: 2,
-  },
-];
+import TechnicianMetricsCard from "./TechnicianCard";
+import { mockTechniciansMetrics } from "../../mocks/technicans";
 
 export default function TechniciansOverview() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -104,17 +17,16 @@ export default function TechniciansOverview() {
 
   const handleViewDetails = (techId: string) => {
     console.log("View details for technician:", techId);
-    // Here you would navigate to technician details or open a modal
   };
 
-  const useCarousel = techniciansMetrics.length >= 5;
+  const useCarousel = mockTechniciansMetrics.length >= 5;
 
   // Carousel navigation with animation
   const goToPrevious = () => {
     if (isAnimating) return;
     setIsAnimating(true);
     setCurrentIndex((prev) =>
-      prev === 0 ? techniciansMetrics.length - 1 : prev - 1
+      prev === 0 ? mockTechniciansMetrics.length - 1 : prev - 1
     );
     setTimeout(() => setIsAnimating(false), 500);
   };
@@ -123,7 +35,7 @@ export default function TechniciansOverview() {
     if (isAnimating) return;
     setIsAnimating(true);
     setCurrentIndex((prev) =>
-      prev === techniciansMetrics.length - 1 ? 0 : prev + 1
+      prev === mockTechniciansMetrics.length - 1 ? 0 : prev + 1
     );
     setTimeout(() => setIsAnimating(false), 500);
   };
@@ -137,24 +49,24 @@ export default function TechniciansOverview() {
 
   // Get visible technicians for carousel (show 4 at a time)
   const getVisibleTechnicians = () => {
-    if (techniciansMetrics.length <= 4) return techniciansMetrics;
+    if (mockTechniciansMetrics.length <= 4) return mockTechniciansMetrics;
 
     const visible = [];
     for (let i = 0; i < 4; i++) {
-      const index = (currentIndex + i) % techniciansMetrics.length;
-      visible.push(techniciansMetrics[index]);
+      const index = (currentIndex + i) % mockTechniciansMetrics.length;
+      visible.push(mockTechniciansMetrics[index]);
     }
     return visible;
   };
 
   // Calculate team stats
-  const availableCount = techniciansMetrics.filter(
+  const availableCount = mockTechniciansMetrics.filter(
     (t) => t.status === "available"
   ).length;
-  const busyCount = techniciansMetrics.filter(
+  const busyCount = mockTechniciansMetrics.filter(
     (t) => t.status === "busy"
   ).length;
-  const overloadedCount = techniciansMetrics.filter(
+  const overloadedCount = mockTechniciansMetrics.filter(
     (t) => t.workloadPercentage >= 80
   ).length;
 
@@ -171,7 +83,7 @@ export default function TechniciansOverview() {
       </div>
 
       {/* Technicians Container */}
-      {techniciansMetrics.length === 0 ? (
+      {mockTechniciansMetrics.length === 0 ? (
         <div className="flex items-center justify-center py-16">
           <p className="text-gray-500 dark:text-gray-400">
             No technicians in your team yet.
@@ -229,7 +141,7 @@ export default function TechniciansOverview() {
 
           {/* Carousel Indicators */}
           <div className="flex justify-center gap-2 mt-4">
-            {techniciansMetrics.map((_, idx) => (
+            {mockTechniciansMetrics.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => goToIndex(idx)}
@@ -249,16 +161,16 @@ export default function TechniciansOverview() {
         <div className="flex justify-center">
           <div
             className={`grid gap-4 ${
-              techniciansMetrics.length === 1
+              mockTechniciansMetrics.length === 1
                 ? "grid-cols-1"
-                : techniciansMetrics.length === 2
+                : mockTechniciansMetrics.length === 2
                 ? "grid-cols-1 sm:grid-cols-2"
-                : techniciansMetrics.length === 3
+                : mockTechniciansMetrics.length === 3
                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                 : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
             }`}
           >
-            {techniciansMetrics.map((tech) => (
+            {mockTechniciansMetrics.map((tech) => (
               <TechnicianMetricsCard
                 key={tech.id}
                 technician={tech}
@@ -273,9 +185,9 @@ export default function TechniciansOverview() {
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-3 text-white shadow-md">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-xs">Total Team</p>
+              <p className="text-blue-100 text-xs">Total Technicians</p>
               <p className="text-2xl font-bold mt-0.5">
-                {techniciansMetrics.length}
+                {mockTechniciansMetrics.length}
               </p>
             </div>
             <Users className="w-8 h-8 text-blue-200" />

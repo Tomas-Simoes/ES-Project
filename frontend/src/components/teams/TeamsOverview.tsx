@@ -3,7 +3,8 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import TeamMetricsCard from "./TeamMetricsCard";
 import TeamForm from "./TeamForm";
-import { mockTechnicians, mockTeamLeaders } from "../../mocks/users";
+import { mockTechnicians } from "../../mocks/technicans";
+import { mockTeamLeaders } from "../../mocks/users";
 
 const teamsMetrics = [
   {

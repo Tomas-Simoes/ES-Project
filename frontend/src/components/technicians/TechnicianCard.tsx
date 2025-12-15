@@ -1,17 +1,11 @@
 // src/components/technicians/TechnicianMetricsCard.tsx
-import {
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  TrendingUp,
-  Activity,
-} from "lucide-react";
+import { CheckCircle, Clock, TrendingUp, Activity } from "lucide-react";
 
 interface TechnicianMetrics {
   id: string;
   name: string;
   email: string;
-  status: "available" | "busy" | "offline";
+  status: "available" | "busy" | "overloaded";
   totalIncidents: number;
   openIncidents: number;
   inProgressIncidents: number;
@@ -27,18 +21,15 @@ interface Props {
   onViewDetails?: (techId: string) => void;
 }
 
-export default function TechnicianMetricsCard({
-  technician,
-  onViewDetails,
-}: Props) {
+export default function TechnicianCard({ technician }: Props) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "available":
         return "bg-green-500";
       case "busy":
         return "bg-orange-500";
-      case "offline":
-        return "bg-gray-400";
+      case "overloaded":
+        return "bg-red-500";
       default:
         return "bg-gray-400";
     }
@@ -50,8 +41,8 @@ export default function TechnicianMetricsCard({
         return "text-green-600 dark:text-green-400";
       case "busy":
         return "text-orange-600 dark:text-orange-400";
-      case "offline":
-        return "text-gray-600 dark:text-gray-400";
+      case "overloaded":
+        return "text-red-600 dark:text-red-400";
       default:
         return "text-gray-600 dark:text-gray-400";
     }
@@ -161,14 +152,6 @@ export default function TechnicianMetricsCard({
             {technician.highPriorityCount}
           </span>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">
-            Last Activity
-          </span>
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {technician.lastActivity}
-          </span>
-        </div>
       </div>
 
       {/* Performance Metrics */}
@@ -206,25 +189,7 @@ export default function TechnicianMetricsCard({
             style={{ width: `${technician.workloadPercentage}%` }}
           />
         </div>
-        {technician.workloadPercentage >= 80 && (
-          <div className="flex items-center gap-1 mt-1">
-            <AlertTriangle className="w-3 h-3 text-red-500" />
-            <span className="text-xs text-red-600 dark:text-red-400">
-              Overloaded
-            </span>
-          </div>
-        )}
       </div>
-
-      {/* View Details Button */}
-      {onViewDetails && (
-        <button
-          onClick={() => onViewDetails(technician.id)}
-          className="w-full py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white text-sm font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
-        >
-          View Details
-        </button>
-      )}
     </div>
   );
 }

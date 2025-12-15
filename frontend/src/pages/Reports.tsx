@@ -5,7 +5,7 @@ import TechnicianPerformance from "../components/reports/TechnicianPerformance";
 import IncidentDistribution from "../components/reports/IncidentDistribution";
 import ActiveIncidentsList from "../components/reports/ActiveIncidentsList";
 import TeamActivity from "../components/reports/TeamActivity";
-import { mockTechnicians } from "../mocks/users";
+import { mockTechnicians } from "../mocks/technicans";
 import { mockIncidents } from "../mocks/incidents";
 
 export default function Reports() {

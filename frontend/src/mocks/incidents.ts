@@ -1,8 +1,8 @@
 // src/mocks/incidents.ts
-import type { IncidentWithDetails } from "../types/incident";
-import { mockTechnicians } from "./users";
+import type { IncidentDTO } from "../types/incident";
+import { mockTechnicians } from "./technicans";
 
-export const mockIncidents: IncidentWithDetails[] = [
+export const mockIncidents: IncidentDTO[] = [
   {
     id: "inc-1",
     title: "Server Down",
@@ -11,7 +11,7 @@ export const mockIncidents: IncidentWithDetails[] = [
     description: "Server is completely down, needs immediate attention",
     status: "In Progress",
     priority: "High",
-    created_at: new Date("2025-12-25T09:30:00"),
+    createdAt: "2025-12-25T09:30:00",
     teamId: "team-1",
   },
   {
@@ -22,7 +22,7 @@ export const mockIncidents: IncidentWithDetails[] = [
     description: "Users cannot log in due to session timeout",
     status: "Resolved",
     priority: "Medium",
-    created_at: new Date("2025-12-13T09:30:00"),
+    createdAt: "2025-12-13T09:30:00",
   },
   {
     id: "inc-3",
@@ -32,7 +32,7 @@ export const mockIncidents: IncidentWithDetails[] = [
     description: "Payments are failing for some users",
     status: "Open",
     priority: "High",
-    created_at: new Date("2025-12-12T14:00:00"),
+    createdAt: "2025-12-12T14:00:00",
   },
   {
     id: "inc-4",
@@ -42,7 +42,7 @@ export const mockIncidents: IncidentWithDetails[] = [
     description: "Dashboard widgets overlap in mobile view",
     status: "In Progress",
     priority: "Low",
-    created_at: new Date("2025-12-10T11:15:00"),
+    createdAt: "2025-12-10T11:15:00",
     teamId: "team-2",
   },
   {
@@ -53,7 +53,7 @@ export const mockIncidents: IncidentWithDetails[] = [
     description: "System emails are not being delivered",
     status: "Open",
     priority: "Medium",
-    created_at: new Date("2025-12-09T08:45:00"),
+    createdAt: "2025-12-09T08:45:00",
     teamId: "team-1",
   },
   {
@@ -64,11 +64,11 @@ export const mockIncidents: IncidentWithDetails[] = [
     description: "API response time is above 5s for some endpoints",
     status: "In Progress",
     priority: "Medium",
-    created_at: new Date("2025-12-08T13:30:00"),
+    createdAt: "2025-12-08T13:30:00",
   },
 ];
 
-export const mockMyIncidents: IncidentWithDetails[] = [
+export const mockMyIncidents: IncidentDTO[] = [
   {
     id: "inc-1",
     title: "Server Down",
@@ -77,7 +77,7 @@ export const mockMyIncidents: IncidentWithDetails[] = [
     description: "Server is completely down, needs immediate attention",
     status: "In Progress",
     priority: "High",
-    created_at: new Date("2025-12-25T09:30:00"),
+    createdAt: "2025-12-25T09:30:00",
     teamId: "team-1",
   },
   {
@@ -88,7 +88,7 @@ export const mockMyIncidents: IncidentWithDetails[] = [
     description: "System emails are not being delivered",
     status: "Open",
     priority: "Medium",
-    created_at: new Date("2025-12-09T08:45:00"),
+    createdAt: "2025-12-09T08:45:00",
     teamId: "team-1",
   },
   {
@@ -99,7 +99,7 @@ export const mockMyIncidents: IncidentWithDetails[] = [
     description: "Queries taking longer than expected during peak hours",
     status: "In Progress",
     priority: "High",
-    created_at: new Date("2025-12-20T14:20:00"),
+    createdAt: "2025-12-20T14:20:00",
     teamId: "team-1",
   },
   {
@@ -110,7 +110,7 @@ export const mockMyIncidents: IncidentWithDetails[] = [
     description: "App crashes when user tries to upload images",
     status: "Open",
     priority: "Medium",
-    created_at: new Date("2025-12-15T11:30:00"),
+    createdAt: "2025-12-15T11:30:00",
     teamId: "team-1",
   },
   {
@@ -121,7 +121,7 @@ export const mockMyIncidents: IncidentWithDetails[] = [
     description: "Critical security vulnerability needs patching",
     status: "Resolved",
     priority: "High",
-    created_at: new Date("2025-12-01T08:00:00"),
+    createdAt: "2025-12-01T08:00:00",
     teamId: "team-1",
   },
 ];

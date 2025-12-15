@@ -1,4 +1,12 @@
-import type { TeamLeader, Technician } from "./user";
+import type { User } from "./user";
+
+/**
+ * Team table
+ * -------------------------------
+ * id (PK)
+ * name
+ * leaderId (FK to User table)
+ */
 
 export interface TeamBase {
   id: string;
@@ -7,16 +15,6 @@ export interface TeamBase {
 }
 
 export interface TeamWithDetails extends TeamBase {
-  leader: TeamLeader;
-  technicians: Technician[];
+  leader: User;
+  technicians: User[];
 }
-
-export interface TeamUI {
-  id: string;
-  name: string;
-  category: string;
-  leader: TeamLeader;
-  technicians: Technician[];
-}
-
-export type Team = TeamBase | TeamWithDetails;

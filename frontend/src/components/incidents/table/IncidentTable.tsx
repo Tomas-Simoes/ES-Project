@@ -1,8 +1,8 @@
-import type { Incident } from "../../../types/incident";
+import type { IncidentDTO } from "../../../types/incident";
 import IncidentRow from "./IncidentRow";
 
 interface Props {
-  incidents: Incident[];
+  incidents: IncidentDTO[];
 }
 
 export default function IncidentTable({ incidents }: Props) {

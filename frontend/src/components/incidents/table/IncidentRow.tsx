@@ -66,7 +66,7 @@ export default function IncidentRow({ incident }: Props) {
       </td>
 
       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-        {incident.created_at.toLocaleString()}
+        {new Date(incident.created_at).toLocaleString()}
       </td>
     </tr>
   );

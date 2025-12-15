@@ -1,6 +1,5 @@
 // src/components/teams/TeamCard.tsx
 import { Trash2 } from "lucide-react";
-import type { TeamUI } from "../../types/team";
 
 interface Props {
   team: TeamUI;
