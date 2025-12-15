@@ -37,7 +37,10 @@ export class IncidentsController {
   }
 
   @Post(':id/unassign')
-  unassign(@Param('id') id: string, @Body() dto: AssignTechniciansDto) {
-    return this.service.unassignTechnicians(id, dto.technicianIds);
+  unassignTechnician(
+    @Param('id') incidentId: string,
+    @Body('technicianId') technicianId: string,
+  ) {
+    return this.incidentsService.unassignOne(incidentId, technicianId);
   }
 }

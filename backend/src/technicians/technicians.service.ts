@@ -109,7 +109,6 @@ export class TechniciansService {
       ).length;
 
       const avgResolutionTime = avgResolutionTimeStr(incidents);
-      const lastActivity = lastActivityStr(incidents);
 
       const workloadScore = (inProgressIncidents * 2) + highPriorityCount;
       const workloadPercentage = Math.min(100, Math.round((workloadScore / Math.max(1, totalIncidents)) * 100));
@@ -125,7 +124,6 @@ export class TechniciansService {
         resolvedToday,
         avgResolutionTime,
         workloadPercentage,
-        lastActivity,
         highPriorityCount,
         teamId: t.teamId,
         team: t.team,

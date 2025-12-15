@@ -180,4 +180,15 @@ export class IncidentsService {
     });
     return { ok: true };
   }
+
+  async unassignOne(incidentId: string, technicianId: string) {
+  return this.prisma.incidentAssignment.delete({
+    where: {
+      incidentId_userId: {
+        incidentId,
+        userId: technicianId,
+      },
+    },
+  });
+}
 }
