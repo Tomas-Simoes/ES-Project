@@ -8,7 +8,10 @@ interface TeamActivityProps {
 
 export default function TeamActivity({ incidents }: TeamActivityProps) {
   const recentActivity = [...incidents]
-    .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
     .slice(0, 5);
 
   const getActivityText = (incident: Incident) => {
@@ -55,7 +58,7 @@ export default function TeamActivity({ incidents }: TeamActivityProps) {
                 {getActivityText(incident)}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                {incident.created_at.toLocaleString()}
+                {new Date(incident.createdAt).toLocaleString()}
               </p>
             </div>
           </div>

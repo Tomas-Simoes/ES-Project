@@ -1,7 +1,8 @@
 import IncidentTable from "../components/incidents/table/IncidentTable";
 import TechniciansOverview from "../components/technicians/TechniciansOverview";
 import { useTechniciansWithMetrics } from "../hooks/technicians/useTechniciansMetrics";
-import { useIncidents } from "../hooks/useIncidents";
+import { useAssignTechnicians } from "../hooks/technicians/useAssignTechnicians";
+import { useIncidents } from "../hooks/incidents/useIncidents";
 import Loading from "./Loading";
 import Error from "./Error";
 
@@ -24,7 +25,33 @@ import Error from "./Error";
  *   },
  *   ...
  * ]
- * 
+ *
+ *
+ ** Endpoint: PATCH /api/incidents/:incidentId/assigments
+ *  Updates the ownerId (assigned technician) of a specific incident.
+ *  Example request:
+ *   Body: {
+ *     "assignments":
+ *        [
+ *          {
+ *            technicianId: "t1",
+ *          }
+ *        ]
+ *   }
+ *
+ *   Example response:
+ *   {
+ *     "id": "inc-1",
+ *     "title": "Server Down",
+ *     "description": "Server is down, needs attention",
+ *     "status": "In Progress",
+ *     "priority": "High",
+ *     "createdAt": "2025-12-25T09:30:00.000Z",
+ *     "ownerId": "t1",                                           --------> updated ownerId
+ *     "teamId": "team-1",
+ *     "owner": { "id": "t1", "name": "Alice Johnson", "email": "alice@company.com" },
+ *     "team": { "id": "team-1", "name": "Backend Team", "leaderId": "user-2" }
+ *   }
  *
  ** Endpoint: GET /api/technician?teamId=team-1
  * Fetches a list of technicians for a specific team.
@@ -64,22 +91,66 @@ export default function Incidents() {
     incidents,
     loading: incidentLoading,
     error: incidentError,
-  } = useIncidents(); // TODO: Pass teamId based on logged-in user
+    // refetch: refetchIncidents,
+    fetchTechniciansForIncidents,
+  } = useIncidents("dd388d8c-5958-4002-80e5-d37d462fd084"); // TODO: Pass teamId based on logged-in user
 
   const {
     technicians,
     loading: techLoading,
+    refreshing: UI_techRefreshing,
     error: techError,
-  } = useTechniciansWithMetrics();
+    refetch: refetchTechs,
+  } = useTechniciansWithMetrics("dd388d8c-5958-4002-80e5-d37d462fd084"); // TODO: Pass teamId based on logged-in user
 
-  if (incidentLoading || techLoading) return <Loading />;
-  if (incidentError || techError)
-    return <Error message={incidentError ?? techError ?? undefined} />;
+  const {
+    assignTechnicians,
+    unassignTechnicians,
+    error: assignError,
+  } = useAssignTechnicians();
 
+  const handleAssign = async (incidentId: string, techIds: string[]) => {
+    const success = await assignTechnicians(incidentId, techIds);
+    if (success) refetchTechs?.(true);
+  };
+
+  const handleUnassign = async (incidentId: string, techId: string) => {
+    const sucess = await unassignTechnicians(incidentId, techId);
+
+    if (sucess) refetchTechs?.(true);
+  };
+
+  if (incidentError || techError || assignError)
+    return (
+      <Error message={incidentError ?? techError ?? assignError ?? undefined} />
+    );
+
+  fetchTechniciansForIncidents().then((techMap) => {
+    console.log(techMap);
+  });
   return (
     <div className="space-y-6 relative">
+      {(incidentLoading || techLoading) && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
+          <Loading />
+        </div>
+      )}
+
+      {UI_techRefreshing && (
+        <div className="absolute top-2 right-2 z-40">
+          <Loading small />
+        </div>
+      )}
+
       <TechniciansOverview technicians={technicians} />
-      <IncidentTable incidents={incidents} />
+
+      <IncidentTable
+        incidents={incidents}
+        technicians={technicians}
+        fetchIncidentsForTechnicians={fetchTechniciansForIncidents}
+        onAssignTechnicians={handleAssign}
+        onUnassignTechnicians={handleUnassign}
+      />
     </div>
   );
 }

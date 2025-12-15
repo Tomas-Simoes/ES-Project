@@ -7,7 +7,7 @@ import Reports from "./pages/Reports";
 import Logout from "./pages/Logout";
 import NotFound from "./pages/NotFound";
 import MyIncidents from "./pages/MyIncidents";
-import ManagerDashboard from "./pages/ManagerDashboard";
+import Manager from "./pages/Manager";
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/incidents" element={<Incidents />} />
             <Route path="/my-incidents" element={<MyIncidents />} />
-            <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+            <Route path="/manager-dashboard" element={<Manager />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

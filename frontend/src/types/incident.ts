@@ -1,5 +1,5 @@
 import type { TeamBase } from "./team";
-import type { User } from "./user";
+import type { Technician, User } from "./user";
 
 /**
  * Incident table
@@ -56,9 +56,7 @@ export interface IncidentBase {
   teamId?: string;
 }
 
-export interface IncidentTechnicianAssignment {
-  incidentId: string;
-  technicianId: string;
-
-  role?: "primary" | "secondary";
+export interface IncidentForTechnicianAssignment {
+  id: string;
+  technicians: Technician[];
 }

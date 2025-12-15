@@ -67,7 +67,9 @@ export default function ActiveIncidentsList({
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                     <Clock size={14} />
-                    <span>{incident.created_at.toLocaleDateString()}</span>
+                    <span>
+                      {new Date(incident.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               </div>

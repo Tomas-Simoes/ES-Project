@@ -1,5 +1,5 @@
 // src/components/technicians/TechnicianMetricsCard.tsx
-import { CheckCircle, Clock, TrendingUp, Activity } from "lucide-react";
+import { CheckCircle, Clock, Activity } from "lucide-react";
 
 interface TechnicianMetrics {
   id: string;
@@ -154,20 +154,6 @@ export default function TechnicianCard({ technician }: Props) {
         </div>
       </div>
 
-      {/* Performance Metrics */}
-      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2 mb-3">
-        <div className="flex items-center gap-1 mb-1">
-          <TrendingUp className="w-3 h-3 text-gray-600 dark:text-gray-400" />
-          <span className="text-xs text-gray-600 dark:text-gray-400">
-            Avg Resolution Time
-          </span>
-        </div>
-        <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-          {technician.avgResolutionTime}
-        </p>
-      </div>
-
-      {/* Workload Bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs text-gray-600 dark:text-gray-400">

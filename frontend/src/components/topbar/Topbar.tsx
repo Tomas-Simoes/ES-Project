@@ -36,30 +36,36 @@ function Topbar() {
           <NavLink to="/" className={linkClass}>
             Dashboard
           </NavLink>
-          <NavLink to="/incidents" className={linkClass}>
-            Incidents
-          </NavLink>
-          <RoleRender allowedRoles={["admin", "manager"]}>
-            <NavLink to="/reports" className={linkClass}>
-              Reports
-            </NavLink>
-          </RoleRender>
-          <RoleRender allowedRoles={["admin", "manager"]}>
-            <NavLink to="/manager-dashboard" className={linkClass}>
-              Manager Dashboard
-            </NavLink>
-          </RoleRender>
+
           <RoleRender allowedRoles={["technician"]}>
             <NavLink to="/my-incidents" className={linkClass}>
               My Incidents
             </NavLink>
           </RoleRender>
+
+          <RoleRender allowedRoles={["admin", "team-leader"]}>
+            <NavLink to="/incidents" className={linkClass}>
+              My Team
+            </NavLink>
+          </RoleRender>
+
+          <RoleRender allowedRoles={["admin", "manager"]}>
+            <NavLink to="/manager-dashboard" className={linkClass}>
+              Manager Dashboard
+            </NavLink>
+          </RoleRender>
+
+          <RoleRender allowedRoles={["admin", "manager"]}>
+            <NavLink to="/reports" className={linkClass}>
+              Reports
+            </NavLink>
+          </RoleRender>
+
           <NavLink to="/integrations" className={linkClass}>
             Server Monitoring
           </NavLink>
         </nav>
 
-        {/* Right side */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
 

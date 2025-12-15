@@ -14,7 +14,7 @@ export interface TeamBase {
   leaderId: string;
 }
 
-export interface TeamWithDetails extends TeamBase {
+export type TeamDTO = TeamBase & {
   leader: User;
   technicians: User[];
-}
+};

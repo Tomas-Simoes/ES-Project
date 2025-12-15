@@ -1,35 +1,82 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import axios from "axios";
 import type { TechnicianWithMetrics } from "../../types/user";
 import { mockTechniciansMetrics } from "../../mocks/technicans";
-import axios from "axios";
 
 export function useTechniciansWithMetrics(teamId?: string) {
   const [technicians, setTechnicians] = useState<TechnicianWithMetrics[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true); // first load
+  const [refreshing, setRefreshing] = useState<boolean>(false); // silent refresh
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchTechnicians = async () => {
+  const isFirstLoad = useRef(true);
+
+  const fetchData = useCallback(
+    async (silent = false) => {
       try {
-        setLoading(true);
+        if (silent && !isFirstLoad.current) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+
+        setError(null);
+
         const res = await axios.get<TechnicianWithMetrics[]>(
-          "/technicians/metrics",
-          { params: teamId ? { teamId } : undefined }
+          "/api/technician/metrics",
+          {
+            params: teamId ? { teamId } : undefined,
+          }
         );
+
         console.log("Fetched technicians metrics:", res.data);
 
-        if (!Array.isArray(res.data)) setTechnicians(mockTechniciansMetrics);
-        else setTechnicians(res.data);
+        setTechnicians(
+          Array.isArray(res.data) ? res.data : mockTechniciansMetrics
+        );
       } catch (err: unknown) {
-        if (err instanceof Error) setError(err.message);
+        if (axios.isAxiosError(err)) {
+          console.error(
+            "Axios error:",
+            err.response?.status,
+            err.response?.data
+          );
+          setError(
+            `Axios error: ${err.response?.status} ${JSON.stringify(
+              err.response?.data
+            )}`
+          );
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+          setError(err.message);
+        } else {
+          console.error("Unknown error", err);
+          setError("Unknown error fetching technicians metrics");
+        }
+
         setTechnicians(mockTechniciansMetrics);
       } finally {
-        setLoading(false);
+        if (silent && !isFirstLoad.current) {
+          setRefreshing(false);
+        } else {
+          setLoading(false);
+          isFirstLoad.current = false;
+        }
       }
-    };
+    },
+    [teamId]
+  );
 
-    fetchTechnicians();
-  }, []);
+  useEffect(() => {
+    fetchData(false); // initial load
+  }, [fetchData]);
 
-  return { technicians, loading, error, setTechnicians };
+  return {
+    technicians,
+    loading,
+    refreshing, // opcional para spinner pequeno
+    error,
+    refetch: fetchData, // refetch(true)
+    setTechnicians,
+  };
 }
