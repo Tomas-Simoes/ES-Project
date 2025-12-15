@@ -1,4 +1,3 @@
-// src/components/technicians/TechniciansOverview.tsx
 import { useState } from "react";
 import {
   ChevronLeft,
@@ -9,9 +8,15 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import TechnicianMetricsCard from "./TechnicianCard";
-import { mockTechniciansMetrics } from "../../mocks/technicans";
+import type { TechnicianWithMetrics } from "../../types/user";
 
-export default function TechniciansOverview() {
+interface TechniciansOverviewProps {
+  technicians: TechnicianWithMetrics[];
+}
+
+export default function TechniciansOverview({
+  technicians,
+}: TechniciansOverviewProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -19,24 +24,19 @@ export default function TechniciansOverview() {
     console.log("View details for technician:", techId);
   };
 
-  const useCarousel = mockTechniciansMetrics.length >= 5;
+  const useCarousel = technicians.length >= 5;
 
-  // Carousel navigation with animation
   const goToPrevious = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentIndex((prev) =>
-      prev === 0 ? mockTechniciansMetrics.length - 1 : prev - 1
-    );
+    setCurrentIndex((prev) => (prev === 0 ? technicians.length - 1 : prev - 1));
     setTimeout(() => setIsAnimating(false), 500);
   };
 
   const goToNext = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentIndex((prev) =>
-      prev === mockTechniciansMetrics.length - 1 ? 0 : prev + 1
-    );
+    setCurrentIndex((prev) => (prev === technicians.length - 1 ? 0 : prev + 1));
     setTimeout(() => setIsAnimating(false), 500);
   };
 
@@ -47,26 +47,21 @@ export default function TechniciansOverview() {
     setTimeout(() => setIsAnimating(false), 500);
   };
 
-  // Get visible technicians for carousel (show 4 at a time)
   const getVisibleTechnicians = () => {
-    if (mockTechniciansMetrics.length <= 4) return mockTechniciansMetrics;
-
+    if (technicians.length <= 4) return technicians;
     const visible = [];
     for (let i = 0; i < 4; i++) {
-      const index = (currentIndex + i) % mockTechniciansMetrics.length;
-      visible.push(mockTechniciansMetrics[index]);
+      const index = (currentIndex + i) % technicians.length;
+      visible.push(technicians[index]);
     }
     return visible;
   };
 
-  // Calculate team stats
-  const availableCount = mockTechniciansMetrics.filter(
+  const availableCount = technicians.filter(
     (t) => t.status === "available"
   ).length;
-  const busyCount = mockTechniciansMetrics.filter(
-    (t) => t.status === "busy"
-  ).length;
-  const overloadedCount = mockTechniciansMetrics.filter(
+  const busyCount = technicians.filter((t) => t.status === "busy").length;
+  const overloadedCount = technicians.filter(
     (t) => t.workloadPercentage >= 80
   ).length;
 
@@ -83,27 +78,23 @@ export default function TechniciansOverview() {
       </div>
 
       {/* Technicians Container */}
-      {mockTechniciansMetrics.length === 0 ? (
+      {technicians.length === 0 ? (
         <div className="flex items-center justify-center py-16">
           <p className="text-gray-500 dark:text-gray-400">
             No technicians in your team yet.
           </p>
         </div>
       ) : useCarousel ? (
-        /* Carousel mode for 5+ technicians */
         <div className="relative">
           <div className="flex items-center justify-center gap-4">
-            {/* Previous Button */}
             <button
               onClick={goToPrevious}
               disabled={isAnimating}
-              className="flex-shrink-0 p-2 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg transition-all hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Previous technician"
+              className="..."
             >
               <ChevronLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
             </button>
 
-            {/* Technicians Display with Animation */}
             <div
               className="overflow-hidden"
               style={{ width: "calc(4 * (320px + 1rem))" }}
@@ -128,20 +119,13 @@ export default function TechniciansOverview() {
               </div>
             </div>
 
-            {/* Next Button */}
-            <button
-              onClick={goToNext}
-              disabled={isAnimating}
-              className="flex-shrink-0 p-2 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg transition-all hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Next technician"
-            >
+            <button onClick={goToNext} disabled={isAnimating} className="...">
               <ChevronRight className="w-6 h-6 text-gray-700 dark:text-gray-300" />
             </button>
           </div>
 
-          {/* Carousel Indicators */}
           <div className="flex justify-center gap-2 mt-4">
-            {mockTechniciansMetrics.map((_, idx) => (
+            {technicians.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => goToIndex(idx)}
@@ -157,20 +141,19 @@ export default function TechniciansOverview() {
           </div>
         </div>
       ) : (
-        /* Centered grid mode for 1-4 technicians */
         <div className="flex justify-center">
           <div
             className={`grid gap-4 ${
-              mockTechniciansMetrics.length === 1
+              technicians.length === 1
                 ? "grid-cols-1"
-                : mockTechniciansMetrics.length === 2
+                : technicians.length === 2
                 ? "grid-cols-1 sm:grid-cols-2"
-                : mockTechniciansMetrics.length === 3
+                : technicians.length === 3
                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                 : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
             }`}
           >
-            {mockTechniciansMetrics.map((tech) => (
+            {technicians.map((tech) => (
               <TechnicianMetricsCard
                 key={tech.id}
                 technician={tech}
@@ -180,15 +163,14 @@ export default function TechniciansOverview() {
           </div>
         </div>
       )}
+
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-3 text-white shadow-md">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 text-xs">Total Technicians</p>
-              <p className="text-2xl font-bold mt-0.5">
-                {mockTechniciansMetrics.length}
-              </p>
+              <p className="text-2xl font-bold mt-0.5">{technicians.length}</p>
             </div>
             <Users className="w-8 h-8 text-blue-200" />
           </div>

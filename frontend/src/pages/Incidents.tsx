@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
 import IncidentTable from "../components/incidents/table/IncidentTable";
 import TechniciansOverview from "../components/technicians/TechniciansOverview";
+import { useTechniciansWithMetrics } from "../hooks/technicians/useTechniciansMetrics";
 import { useIncidents } from "../hooks/useIncidents";
-import { mockIncidents } from "../mocks/incidents";
+import Loading from "./Loading";
+import Error from "./Error";
 
 /**
- ** Endpoint: GET /api/incidents
+ ** Endpoint: GET /api/incidents?teamId=team-1
+ * Fetches a list of incidents for a specific team.
  * Example response:
  * [
  *   {
@@ -23,7 +25,8 @@ import { mockIncidents } from "../mocks/incidents";
  *   ...
  * ]
  *
- ** Endpoint: GET /api/technician
+ ** Endpoint: GET /api/technician?teamId=team-1
+ * Fetches a list of technicians for a specific team.
  * Example response:
  *    [
  *      { id: "t1", name: "Alice Johnson", email: "alice@company.com", role: "technician", teamId: "team-1" },
@@ -31,7 +34,8 @@ import { mockIncidents } from "../mocks/incidents";
  *      ...
  *    ]
  *
- ** Endpoint: GET /api/technician/metrics
+ ** Endpoint: GET /api/technician/metrics?teamId=team-1
+ * Fetches technicians and their metrics for a specific team.
  * Example response:
  * [
  *   {
@@ -55,14 +59,25 @@ import { mockIncidents } from "../mocks/incidents";
  */
 
 export default function Incidents() {
-  const { incidents, loading, error } = useIncidents();
+  const {
+    incidents,
+    loading: incidentLoading,
+    error: incidentError,
+  } = useIncidents(); // TODO: Pass teamId based on logged-in user
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  const {
+    technicians,
+    loading: techLoading,
+    error: techError,
+  } = useTechniciansWithMetrics();
+
+  if (incidentLoading || techLoading) return <Loading />;
+  if (incidentError || techError)
+    return <Error message={incidentError ?? techError ?? undefined} />;
 
   return (
     <div className="space-y-6 relative">
-      <TechniciansOverview />
+      <TechniciansOverview technicians={technicians} />
       <IncidentTable incidents={incidents} />
     </div>
   );

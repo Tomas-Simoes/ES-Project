@@ -3,7 +3,7 @@ import type { TechnicianWithMetrics } from "../../types/user";
 import { mockTechniciansMetrics } from "../../mocks/technicans";
 import axios from "axios";
 
-export function useTechniciansWithMetrics() {
+export function useTechniciansWithMetrics(teamId?: string) {
   const [technicians, setTechnicians] = useState<TechnicianWithMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,13 +13,13 @@ export function useTechniciansWithMetrics() {
       try {
         setLoading(true);
         const res = await axios.get<TechnicianWithMetrics[]>(
-          "/technicians/metrics"
+          "/technicians/metrics",
+          { params: teamId ? { teamId } : undefined }
         );
-
         console.log("Fetched technicians metrics:", res.data);
-        setTechnicians(
-          Array.isArray(res.data) ? res.data : mockTechniciansMetrics
-        );
+
+        if (!Array.isArray(res.data)) setTechnicians(mockTechniciansMetrics);
+        else setTechnicians(res.data);
       } catch (err: unknown) {
         if (err instanceof Error) setError(err.message);
         setTechnicians(mockTechniciansMetrics);

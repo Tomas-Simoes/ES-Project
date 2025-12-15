@@ -22,7 +22,7 @@ export default function Reports() {
     const today = new Date();
     return (
       i.status === "Resolved" &&
-      i.created_at.toDateString() === today.toDateString()
+      new Date(i.createdAt).toDateString() === today.toDateString()
     );
   }).length;
   const highPriorityOpen = mockIncidents.filter(

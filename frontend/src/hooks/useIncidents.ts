@@ -3,7 +3,7 @@ import axios from "axios";
 import type { IncidentDTO } from "../types/incident";
 import { mockIncidents } from "../mocks/incidents";
 
-export function useIncidents() {
+export function useIncidents(teamId?: string) {
   const [incidents, setIncidents] = useState<IncidentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -12,7 +12,10 @@ export function useIncidents() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get<IncidentDTO[]>("/incidents");
+        const res = await axios.get<IncidentDTO[]>("/incidents", {
+          params: teamId ? { teamId } : undefined,
+        });
+
         console.log("Fetched incidents:", res.data);
 
         if (!Array.isArray(res.data)) setIncidents(mockIncidents);
@@ -26,7 +29,7 @@ export function useIncidents() {
     };
 
     fetchData();
-  }, []);
+  }, [teamId]);
 
   return { incidents, setIncidents, loading, error };
 }
