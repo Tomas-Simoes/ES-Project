@@ -1,13 +1,15 @@
+// src/pages/Reports.tsx
 import { useState } from "react";
 import TeamOverviewStats from "../components/reports/TeamOverviewStats";
 import TechnicianPerformance from "../components/reports/TechnicianPerformance";
 import IncidentDistribution from "../components/reports/IncidentDistribution";
 import ActiveIncidentsList from "../components/reports/ActiveIncidentsList";
 import TeamActivity from "../components/reports/TeamActivity";
-import { mockTechnicians, mockIncidents } from "../mocks/incidents";
+import { mockTechnicians } from "../mocks/users";
+import { mockIncidents } from "../mocks/incidents";
 
 export default function Reports() {
-  const [selectedTechnician, setSelectedTechnician] = useState<number | null>(
+  const [selectedTechnician, setSelectedTechnician] = useState<string | null>(
     null
   );
 
@@ -58,15 +60,10 @@ export default function Reports() {
             Monitor team performance and incident distribution
           </p>
         </div>
-
         {/* Technician Filter */}
         <select
           value={selectedTechnician || ""}
-          onChange={(e) =>
-            setSelectedTechnician(
-              e.target.value ? Number(e.target.value) : null
-            )
-          }
+          onChange={(e) => setSelectedTechnician(e.target.value || null)}
           className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Technicians</option>

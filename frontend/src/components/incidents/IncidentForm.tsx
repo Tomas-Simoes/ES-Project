@@ -54,9 +54,7 @@ export default function IncidentForm({
         onChange={(e) =>
           setNewIncident({
             ...newIncident,
-            owner: technicians.find(
-              (tech) => tech.id === Number(e.target.value)
-            )!,
+            owner: technicians.find((tech) => tech.id === e.target.value)!,
           })
         }
         className="w-full mb-2 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white"

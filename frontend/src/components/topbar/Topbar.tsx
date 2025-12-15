@@ -39,18 +39,23 @@ function Topbar() {
           <NavLink to="/incidents" className={linkClass}>
             Incidents
           </NavLink>
-          <RoleRender allowedRoles={["technician"]}>
-            <NavLink to="/my-incidents" className={linkClass}>
-              My Incidents
-            </NavLink>
-          </RoleRender>
           <RoleRender allowedRoles={["admin", "manager"]}>
             <NavLink to="/reports" className={linkClass}>
               Reports
             </NavLink>
           </RoleRender>
+          <RoleRender allowedRoles={["admin", "manager"]}>
+            <NavLink to="/manager-dashboard" className={linkClass}>
+              Manager Dashboard
+            </NavLink>
+          </RoleRender>
+          <RoleRender allowedRoles={["technician"]}>
+            <NavLink to="/my-incidents" className={linkClass}>
+              My Incidents
+            </NavLink>
+          </RoleRender>
           <NavLink to="/integrations" className={linkClass}>
-            Integrations
+            Server Monitoring
           </NavLink>
         </nav>
 

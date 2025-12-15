@@ -1,18 +1,25 @@
 import { useState } from "react";
 import type { Incident } from "../../../types/incident";
-import type { Technician } from "../../../types/technician";
 import { Badge } from "../util/IncidentBadges";
 import { StatusIndicator } from "../util/StatusIndicator";
-import { useAuth } from "../../../context/AuthContext";
-import { RoleRender } from "../../RoleRender";
+
+interface Team {
+  id: number;
+  name: string;
+}
 
 interface Props {
   incident: Incident;
 }
 
+const teams: Team[] = [
+  { id: 1, name: "Infrastructure Team" },
+  { id: 2, name: "Software Team" },
+  { id: 3, name: "Security Team" },
+];
+
 export default function IncidentRow({ incident }: Props) {
-  const { role } = useAuth();
-  const [owner, setOwner] = useState<Technician | null>(incident.owner || null);
+  const [team, setTeam] = useState<Team | null>(null);
 
   const priorityColor =
     incident.priority === "High"
@@ -20,14 +27,6 @@ export default function IncidentRow({ incident }: Props) {
       : incident.priority === "Medium"
       ? "yellow"
       : "green";
-
-  // Mock technicians data
-  const technicians: Technician[] = [
-    { id: 1, name: "Alice", email: "alice@example.com" },
-    { id: 2, name: "Bob", email: "bob@example.com" },
-    { id: 3, name: "Charlie", email: "charlie@example.com" },
-    { id: 4, name: "Diana", email: "diana@example.com" },
-  ];
 
   return (
     <tr className="group transition hover:bg-gray-50 dark:hover:bg-gray-700/40">
@@ -39,33 +38,23 @@ export default function IncidentRow({ incident }: Props) {
         {incident.title}
       </td>
 
-      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-        {["admin", "manager"].includes(role) ? (
-          <select
-            value={owner?.id ?? ""}
-            onChange={(e) => {
-              const selected =
-                technicians.find(
-                  (tech) => tech.id === Number(e.target.value)
-                ) || null;
-              setOwner(selected);
-            }}
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-700 dark:text-gray-300"
-          >
-            <option value="">Unassigned</option>
-            {technicians.map((tech) => (
-              <option key={tech.id} value={tech.id}>
-                {tech.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span>{owner ? owner.name : "Unassigned"}</span>
-        )}
-      </td>
-
-      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-        {incident.description}
+      <td className="px-4 py-3 text-sm">
+        <select
+          value={team?.id ?? ""}
+          onChange={(e) => {
+            const selected =
+              teams.find((t) => t.id === Number(e.target.value)) || null;
+            setTeam(selected);
+          }}
+          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-sm text-gray-700 dark:text-gray-300"
+        >
+          <option value="">Unassigned</option>
+          {teams.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
       </td>
 
       <td className="px-4 py-3">
