@@ -1,29 +1,43 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { IncidentsService } from './incidents.service';
-import { CreateIncidentDto } from './dto/create-incident.dto';
-import { UpdateIncidentDto } from './dto/update-incident.dto';
+import { AssignTechniciansDto, CreateIncidentDto, UpdateIncidentDto } from '../common/dto';
 
-@Controller('incidents')
+@Controller('api/incidents')
 export class IncidentsController {
-  constructor(private incidentsService: IncidentsService) {}
+  constructor(private readonly service: IncidentsService) {}
 
   @Get()
-  findAll(@Query() query: any) {
-    return this.incidentsService.findAll(query);
+  findAll(@Query() q: any) {
+    return this.service.findAll(q);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
   }
 
   @Post()
   create(@Body() dto: CreateIncidentDto) {
-    return this.incidentsService.create(dto);
+    return this.service.create(dto);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateIncidentDto) {
-    return this.incidentsService.update(id, dto);
+    return this.service.update(id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.incidentsService.remove(id);
+  @Patch(':id/status')
+  setStatus(@Param('id') id: string, @Body() dto: { status: string }) {
+    return this.service.setStatus(id, dto.status);
+  }
+
+  @Post(':id/assign')
+  assign(@Param('id') id: string, @Body() dto: AssignTechniciansDto) {
+    return this.service.assignTechnicians(id, dto.technicianIds);
+  }
+
+  @Post(':id/unassign')
+  unassign(@Param('id') id: string, @Body() dto: AssignTechniciansDto) {
+    return this.service.unassignTechnicians(id, dto.technicianIds);
   }
 }

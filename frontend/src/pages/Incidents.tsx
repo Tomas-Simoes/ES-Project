@@ -24,6 +24,7 @@ import Error from "./Error";
  *   },
  *   ...
  * ]
+ * 
  *
  ** Endpoint: GET /api/technician?teamId=team-1
  * Fetches a list of technicians for a specific team.

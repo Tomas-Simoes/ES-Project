@@ -7,6 +7,10 @@ interface AuthContextType {
   role: Role;
 }
 
+// MANAGER : ASSIGN TEAMS 
+// TEAM-LEADER : ASSIGN INCIDENTS TO TECHNICIANS 
+// TECHNICIAN : RESOLVE INCIDENTS
+
 const AuthContext = createContext<AuthContextType>({ role: "viewer" });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {

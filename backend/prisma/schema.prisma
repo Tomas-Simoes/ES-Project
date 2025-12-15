@@ -12,6 +12,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  TECHNICIAN
+  MANAGER
+  ADMIN
+}
+
 enum IncidentStatus {
   OPEN
   IN_PROGRESS
@@ -24,22 +30,59 @@ enum IncidentPriority {
   HIGH
 }
 
+model Team {
+  id       String @id @default(uuid())
+  name     String @unique
+
+  leaderId String?
+  leader   User?  @relation("TeamLeader", fields: [leaderId], references: [id])
+
+  technicians User[] @relation("TeamTechnicians")
+  incidents   Incident[]
+}
+
 model User {
-  id        String     @id @default(uuid())
-  name      String
-  incidents Incident[]
+  id    String @id @default(uuid())
+  name  String
+  email String @unique
+  role  Role   @default(TECHNICIAN)
+
+  teamId String?
+  team   Team? @relation("TeamTechnicians", fields: [teamId], references: [id])
+
+  ledTeams Team[] @relation("TeamLeader")
+
+  ownedIncidents Incident[] @relation("IncidentOwner")
+  incidentAssignments IncidentAssignment[]
 }
 
 model Incident {
-  id          String           @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
-  status      IncidentStatus   @default(OPEN)
-  priority    IncidentPriority @default(MEDIUM)
 
-  ownerId String?
-  owner   User? @relation(fields: [ownerId], references: [id])
+  status   IncidentStatus
+  priority IncidentPriority
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  resolvedAt DateTime?
+
+  ownerId String
+  owner   User   @relation("IncidentOwner", fields: [ownerId], references: [id])
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  assignments IncidentAssignment[]
+}
+
+model IncidentAssignment {
+  incidentId String
+  userId     String
+
+  incident Incident @relation(fields: [incidentId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@id([incidentId, userId])
 }
