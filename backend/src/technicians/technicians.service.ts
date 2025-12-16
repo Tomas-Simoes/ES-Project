@@ -113,6 +113,8 @@ export class TechniciansService {
       const workloadScore = (inProgressIncidents * 2) + highPriorityCount;
       const workloadPercentage = Math.min(100, Math.round((workloadScore / Math.max(1, totalIncidents)) * 100));
 
+      console.log("Mail " + t.email);
+
       return {
         id: t.id,
         name: t.name,

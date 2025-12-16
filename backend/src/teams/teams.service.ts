@@ -57,7 +57,6 @@ export class TeamsService {
     const leader = await this.prisma.user.findUnique({ where: { id: leaderId }, select: { id: true } });
     if (!leader) throw new Error('LEADER_NOT_FOUND');
 
-    // opcional: também meter o leader como técnico da team (depende do teu modelo)
     return this.prisma.team.update({
       where: { id: teamId },
       data: { leaderId },

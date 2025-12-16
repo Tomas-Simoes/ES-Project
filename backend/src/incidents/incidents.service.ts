@@ -44,7 +44,7 @@ export class IncidentsService {
         owner: { select: { id: true, name: true, email: true } },
         team: { select: { id: true, name: true, leaderId: true } },
       },
-    });
+    }); 
 
     return incidents.map(i => ({
       ...i,

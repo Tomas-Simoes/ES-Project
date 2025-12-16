@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { PrismaClient, IncidentPriority, IncidentStatus, Role } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
+import * as bcrypt from 'bcrypt';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -15,28 +16,41 @@ async function main() {
   await prisma.team.deleteMany();
   await prisma.user.deleteMany();
 
+  // Password base para todos os users do seed
+  const seedPassword = process.env.SEED_PASSWORD ?? '1234';
+  const passwordHash = await bcrypt.hash(seedPassword, 10);
+
+  // helper para não repetires passwordHash em todo o lado
+  const userData = (name: string, email: string, role: Role) => ({
+    name,
+    email,
+    role,
+    passwordHash,
+    refreshTokenHash: null as string | null,
+  });
+
   const manager = await prisma.user.create({
-    data: { name: 'Maria Manager', email: 'manager@company.com', role: Role.MANAGER },
+    data: userData('Maria Manager', 'manager@company.com', Role.MANAGER),
   });
 
   const backendLeader = await prisma.user.create({
-    data: { name: 'Bob Leader', email: 'bob.leader@company.com', role: Role.TECHNICIAN },
+    data: userData('Bob Leader', 'bob.leader@company.com', Role.TECHNICIAN),
   });
 
   const frontendLeader = await prisma.user.create({
-    data: { name: 'Alice Leader', email: 'alice.leader@company.com', role: Role.TECHNICIAN },
+    data: userData('Alice Leader', 'alice.leader@company.com', Role.TECHNICIAN),
   });
 
   const tech1 = await prisma.user.create({
-    data: { name: 'Charlie Tech', email: 'charlie@company.com', role: Role.TECHNICIAN },
+    data: userData('Charlie Tech', 'charlie@company.com', Role.TECHNICIAN),
   });
 
   const tech2 = await prisma.user.create({
-    data: { name: 'Diana Tech', email: 'diana@company.com', role: Role.TECHNICIAN },
+    data: userData('Diana Tech', 'diana@company.com', Role.TECHNICIAN),
   });
 
   const tech3 = await prisma.user.create({
-    data: { name: 'Eve Tech', email: 'eve@company.com', role: Role.TECHNICIAN },
+    data: userData('Eve Tech', 'eve@company.com', Role.TECHNICIAN),
   });
 
   const backendTeam = await prisma.team.create({
@@ -121,6 +135,7 @@ async function main() {
   });
 
   console.log('✅ Seed completed');
+  console.log(`🔑 Seed password for all users: ${seedPassword}`);
 }
 
 main()

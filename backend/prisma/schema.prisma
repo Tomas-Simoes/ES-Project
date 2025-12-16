@@ -52,6 +52,9 @@ model User {
 
   ledTeams Team[] @relation("TeamLeader")
 
+  passwordHash     String
+  refreshTokenHash String? 
+
   ownedIncidents Incident[] @relation("IncidentOwner")
   incidentAssignments IncidentAssignment[]
 }

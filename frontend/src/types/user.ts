@@ -1,4 +1,4 @@
-import type { TeamWithDetails } from "./team";
+import type { TeamDTO } from "./team";
 
 /**
  * User table
