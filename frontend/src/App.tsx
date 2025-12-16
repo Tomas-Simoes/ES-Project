@@ -8,6 +8,7 @@ import Logout from "./pages/Logout";
 import NotFound from "./pages/NotFound";
 import MyIncidents from "./pages/MyIncidents";
 import Manager from "./pages/Manager";
+import Monitoring from "./pages/Monitoring";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/my-incidents" element={<MyIncidents />} />
             <Route path="/manager-dashboard" element={<Manager />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/server-monitoring" element={<Monitoring />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

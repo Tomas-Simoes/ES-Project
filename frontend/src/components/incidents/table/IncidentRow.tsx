@@ -5,6 +5,7 @@ import { Badge } from "../util/IncidentBadges";
 import { StatusIndicator } from "../util/StatusIndicator";
 import { useState, useRef, useEffect } from "react";
 
+// ... (Mantenha as interfaces Props como estão) ...
 interface PropsWithTechnicians {
   incident: IncidentDTO;
   technicians: Technician[];
@@ -22,7 +23,7 @@ interface PropsWithTeams {
   teams: TeamDTO[];
   onAssignTechnicians?: never;
   onUnassignTechnicians?: never;
-  onAssignTeams?: (teamId: string) => void; // single selection
+  onAssignTeams?: (teamId: string) => void;
 }
 
 type Props = PropsWithTechnicians | PropsWithTeams;
@@ -62,14 +63,9 @@ export default function IncidentRow({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch dos técnicos atribuídos na primeira vez que abre
+  // Fetch ao montar o componente
   useEffect(() => {
-    if (
-      isOpen &&
-      technicians &&
-      fetchIncidentsForTechnicians &&
-      firstLoadRef.current
-    ) {
+    if (technicians && fetchIncidentsForTechnicians && firstLoadRef.current) {
       const loadAssigned = async () => {
         try {
           const techMap = await fetchIncidentsForTechnicians();
@@ -88,8 +84,7 @@ export default function IncidentRow({
       };
       loadAssigned();
     }
-  }, [isOpen, technicians, fetchIncidentsForTechnicians, incident.id]);
-
+  }, [technicians, fetchIncidentsForTechnicians, incident.id]);
   const handleToggleSelection = (id: string) => {
     if (technicians) {
       let newSelection: string[];
@@ -102,14 +97,16 @@ export default function IncidentRow({
       }
       setSelectedIds(newSelection);
     } else if (teams) {
-      // single-select para team
       setSelectedIds([id]);
       onAssignTeams?.(id);
       setIsOpen(false);
     }
   };
 
+  // Lógica para obter os nomes
   const items = technicians || teams || [];
+
+  // Cria a string "Nome, Nome" baseada nos IDs selecionados
   const selectedNames = items
     .filter((item) => selectedIds.includes(item.id))
     .map((item) => item.name)
@@ -130,10 +127,12 @@ export default function IncidentRow({
             onClick={() => setIsOpen(!isOpen)}
             className="w-full min-w-[200px] px-3 py-2 text-left text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           >
+            {/* --- ALTERAÇÃO 2: Mostrar os nomes aqui --- */}
             <span className="block truncate text-gray-700 dark:text-gray-300">
               {selectedNames ||
-                `Select ${technicians ? "technicians" : "team"}...`}
+                (technicians ? "Assign Technician" : "Assign Team")}
             </span>
+
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <svg
                 className={`h-5 w-5 text-gray-400 transition-transform ${
@@ -168,7 +167,7 @@ export default function IncidentRow({
                       checked={selectedIds.includes(item.id)}
                       onChange={() => handleToggleSelection(item.id)}
                       className="h-4 w-4 accent-blue-500 border-gray-300 rounded focus:ring-blue-500"
-                      disabled={!!teams} // single-select para teams
+                      disabled={!!teams}
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       {item.name}
@@ -180,6 +179,7 @@ export default function IncidentRow({
           )}
         </div>
       </td>
+      {/* ... (restante do código) ... */}
       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
         {incident.description}
       </td>

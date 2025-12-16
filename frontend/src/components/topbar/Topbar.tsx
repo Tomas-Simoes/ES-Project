@@ -61,7 +61,7 @@ function Topbar() {
             </NavLink>
           </RoleRender>
 
-          <NavLink to="/integrations" className={linkClass}>
+          <NavLink to="/server-monitoring" className={linkClass}>
             Server Monitoring
           </NavLink>
         </nav>

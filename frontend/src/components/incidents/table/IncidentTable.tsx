@@ -35,7 +35,7 @@ export default function IncidentTable({
   onAssignTeams,
 }: Props) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
       <table className="min-w-full border-collapse">
         <thead className="bg-gray-50 dark:bg-gray-700">
           <tr>
