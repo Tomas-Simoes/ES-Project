@@ -74,7 +74,7 @@ model Incident {
   ownerId String
   owner   User   @relation("IncidentOwner", fields: [ownerId], references: [id])
 
-  teamId String
+  teamId String?
   team   Team   @relation(fields: [teamId], references: [id])
 
   assignments IncidentAssignment[]

@@ -39,7 +39,7 @@ export class TeamsService {
 
   async create(dto: TeamUpsertDto) {
     return this.prisma.team.create({
-      data: { name: dto.name, leaderId: '00000000-0000-0000-0000-000000000000' as any },
+      data: { name: dto.name, leaderId: dto.leaderId },
       select: { id: true, name: true, leaderId: true },
     });
   }
@@ -95,12 +95,6 @@ export class TeamsService {
     });
 
     // opcional: também remover assignments de incidents dessa team
-    await this.prisma.incidentAssignment.deleteMany({
-      where: {
-        userId: technicianId,
-        incident: { teamId },
-      },
-    });
 
     return { ok: true };
   }

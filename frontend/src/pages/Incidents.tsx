@@ -5,6 +5,8 @@ import { useAssignTechnicians } from "../hooks/technicians/useAssignTechnicians"
 import { useIncidents } from "../hooks/incidents/useIncidents";
 import Loading from "./Loading";
 import Error from "./Error";
+import { useEffect } from "react";
+
 
 /**
  ** Endpoint: GET /api/incidents?teamId=team-1
@@ -93,7 +95,7 @@ export default function Incidents() {
     error: incidentError,
     // refetch: refetchIncidents,
     fetchTechniciansForIncidents,
-  } = useIncidents("d769f4bc-06b1-4c3a-952d-9aa62682117a"); // TODO: Pass teamId based on logged-in user
+  } = useIncidents("e3070eef-7ed8-4ce8-9937-6ca8461cc613"); // TODO: Pass teamId based on logged-in user
 
   const {
     technicians,
@@ -101,7 +103,7 @@ export default function Incidents() {
     refreshing: UI_techRefreshing,
     error: techError,
     refetch: refetchTechs,
-  } = useTechniciansWithMetrics("d769f4bc-06b1-4c3a-952d-9aa62682117a"); // TODO: Pass teamId based on logged-in user
+  } = useTechniciansWithMetrics("e3070eef-7ed8-4ce8-9937-6ca8461cc613"); // TODO: Pass teamId based on logged-in user
 
   const {
     assignTechnicians,
@@ -125,9 +127,9 @@ export default function Incidents() {
       <Error message={incidentError ?? techError ?? assignError ?? undefined} />
     );
 
-  fetchTechniciansForIncidents().then((techMap) => {
-    console.log(techMap);
-  });
+  useEffect(() => {
+    fetchTechniciansForIncidents().then(console.log);
+  }, [fetchTechniciansForIncidents]);
   return (
     <div className="space-y-6 relative">
       {(incidentLoading || techLoading) && (

@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import Logo from "../assets/named_logo.png";
 
+
 export default function Login() {
+  if (localStorage.getItem("token")) {
+    return <Navigate to="/dashboard" replace />;
+  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your authentication logic here
     navigate("/");
   };
 

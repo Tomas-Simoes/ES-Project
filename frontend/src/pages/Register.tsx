@@ -1,24 +1,54 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import Logo from "../assets/named_logo.png";
+import { registerUser, loginUser } from "../services/auth";
+
+
 
 export default function Register() {
+  
+  if (localStorage.getItem("token")) {
+    return <Navigate to="/dashboard" replace />;
+  }
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
-      alert("Passwords don't match!");
+      alert("Passwords don't match");
       return;
     }
-    // Add your registration logic here
-    navigate("/login");
+
+    try {
+      await registerUser({ name, email, password });
+
+      const res = await loginUser({ email, password });
+
+      const token =
+        res.data.access_token ?? res.data.token ?? res.data.jwt;
+
+      if (!token) {
+        alert("Login failed: no token received");
+        return;
+      }
+
+      localStorage.setItem("token", token);
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      alert(
+        err?.response?.data?.message ??
+          err?.message ??
+          "Registration failed"
+      );
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
