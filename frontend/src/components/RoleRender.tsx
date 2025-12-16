@@ -1,8 +1,8 @@
+import React from "react";
 import { useAuth } from "../context/AuthContext";
-import type { Role } from "../context/AuthContext";
 
 interface RoleRenderProps {
-  allowedRoles: Role[];
+  allowedRoles: string[];
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
@@ -12,6 +12,12 @@ export function RoleRender({
   children,
   fallback = null,
 }: RoleRenderProps) {
-  const { role } = useAuth();
-  return allowedRoles.includes(role) ? <>{children}</> : <>{fallback}</>;
+  const { me, loading } = useAuth();
+
+  if (loading) return null; 
+  if (!me) return <>{fallback}</>;
+
+  return allowedRoles.includes(me.role)
+    ? <>{children}</>
+    : <>{fallback}</>;
 }

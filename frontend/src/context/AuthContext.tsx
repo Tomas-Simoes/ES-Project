@@ -1,30 +1,28 @@
-// src/context/AuthContext.tsx
 import { createContext, useContext } from "react";
-
-export type Role =
-  | "admin"
-  | "manager"
-  | "team-leader"
-  | "technician"
-  | "viewer";
+import { useMe, type Me } from "../hooks/auth/useMe";
 
 interface AuthContextType {
-  role: Role;
+  me: Me | null;
+  loading: boolean;
+  refetch: () => Promise<void>;
 }
 
-// MANAGER : ASSIGN TEAMS
-// TEAM-LEADER : ASSIGN INCIDENTS TO TECHNICIANS
-// TECHNICIAN : RESOLVE INCIDENTS
+const AuthContext = createContext<AuthContextType | null>(null);
 
-const AuthContext = createContext<AuthContextType>({ role: "viewer" });
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const role: Role = "team-leader"; // TODO: Replace with real auth logic
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { me, loading, refetch } = useMe();
 
   return (
-    <AuthContext.Provider value={{ role }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ me, loading, refetch }}>
+      {children}
+    </AuthContext.Provider>
   );
-};
+}
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+  return ctx;
+}
