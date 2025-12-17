@@ -28,7 +28,6 @@ export class SetTeamLeaderDto {
 
 export class TeamUpsertDto {
   @IsString() @MinLength(2) name!: string;
-  @IsUUID() leaderId!: string;
 }
 
 export class AddRemoveTechnicianDto {
