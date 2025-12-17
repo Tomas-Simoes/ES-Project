@@ -37,17 +37,24 @@ function Topbar() {
             Dashboard
           </NavLink>
 
-          <NavLink to="/my-incidents" className={linkClass}>
-            My Incidents
-          </NavLink>
+          <RoleRender allowedRoles={["TECHNICIAN"]}>
+            <NavLink to="/my-incidents" className={linkClass}>
+              My Incidents
+            </NavLink>
+          </RoleRender>
 
-          <NavLink to="/incidents" className={linkClass}>
-            My Team
-          </NavLink>
+          <RoleRender allowedRoles={["TEAM-LEADER"]}>
+            <NavLink to="/incidents" className={linkClass}>
+              My Team
+            </NavLink>
+          </RoleRender>
 
-          <NavLink to="/manager-dashboard" className={linkClass}>
-            Manager Dashboard
-          </NavLink>
+          <RoleRender allowedRoles={["MANAGER"]}>
+            <NavLink to="/manager-dashboard" className={linkClass}>
+              Manager Dashboard
+            </NavLink>
+          </RoleRender>
+
 
           <RoleRender allowedRoles={["ADMIN", "MANAGER"]}>
             <NavLink to="/reports" className={linkClass}>
@@ -55,13 +62,19 @@ function Topbar() {
             </NavLink>
           </RoleRender>
 
-          <NavLink to="/server-monitoring" className={linkClass}>
-            Server Monitoring
-          </NavLink>
+          <RoleRender allowedRoles={["ADMIN"]}>
+            <NavLink to="/server-monitoring" className={linkClass}>
+              Server Monitoring
+            </NavLink>
+          </RoleRender>
+  
 
+          <RoleRender allowedRoles={["ADMIN"]}>
           <NavLink to="/admin" className={linkClass}>
             Admin
           </NavLink>
+          </RoleRender>
+
         </nav>
 
         <div className="flex items-center gap-3">
