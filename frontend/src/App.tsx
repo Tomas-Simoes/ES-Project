@@ -24,14 +24,12 @@ function App() {
 
         <div className="flex-1 p-6 bg-gray-100 dark:bg-gray-900">
           <Routes>
-            {/* Public */}
             <Route path="/" element={<HomeRedirect />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
 
-            {/* Private */}
             <Route element={<RequireAuth />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/incidents" element={<Incidents />} />
