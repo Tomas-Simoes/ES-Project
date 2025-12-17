@@ -39,7 +39,7 @@ export class TeamsService {
 
   async create(dto: TeamUpsertDto) {
     return this.prisma.team.create({
-      data: { name: dto.name, leaderId: dto.leaderId },
+      data: { name: dto.name },
       select: { id: true, name: true, leaderId: true },
     });
   }

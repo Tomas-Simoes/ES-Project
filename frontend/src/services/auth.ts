@@ -14,3 +14,8 @@ export async function loginUser(payload: { email: string; password: string }) {
   const res = await api.post("/api/auth/login", payload);
   return res.data; 
 }
+
+export async function logoutUser() {
+  const res = await api.post("/api/auth/logout");
+  return res.data;
+}

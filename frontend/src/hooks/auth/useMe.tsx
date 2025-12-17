@@ -23,7 +23,7 @@ export function useMe() {
 
     try {
       setLoading(true);
-      const res = await api.get("/api/me");
+      const res = await api.get("/api/auth/me");
       setMe(res.data);
     } catch {
       localStorage.removeItem("token");

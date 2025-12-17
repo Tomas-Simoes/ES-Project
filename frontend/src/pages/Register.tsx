@@ -25,28 +25,20 @@ export default function Register() {
       return;
     }
 
-    try {
-      await registerUser({ name, email, password });
+      try {
+        const reg = await registerUser({ name, email, password }); // reg é JSON
 
-      const res = await loginUser({ email, password });
+        const token = reg.access_token;
+        if (!token) {
+          alert("Register failed: no token received");
+          return;
+        }
 
-      const token =
-        res.data.access_token ?? res.data.token ?? res.data.jwt;
-
-      if (!token) {
-        alert("Login failed: no token received");
-        return;
+        localStorage.setItem("token", token);
+        navigate("/dashboard", { replace: true });
+      } catch (err: any) {
+        alert(err?.response?.data?.message ?? err?.message ?? "Registration failed");
       }
-
-      localStorage.setItem("token", token);
-      navigate("/dashboard", { replace: true });
-    } catch (err: any) {
-      alert(
-        err?.response?.data?.message ??
-          err?.message ??
-          "Registration failed"
-      );
-    }
   };
 
 
