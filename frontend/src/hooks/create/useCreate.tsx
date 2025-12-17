@@ -37,11 +37,10 @@ export function useCreateIncident() {
         status: data.status,
         priority: data.priority,
       };
+      console.log("Payload\n");
+      console.log(payload);
 
-      // Only add optional fields if they exist
-      if (data.teamId) payload.teamId = data.teamId;
-      if (data.ownerId) payload.ownerId = data.ownerId;
-
+      
       const res = await axios.post("/api/incidents", payload);
       console.log("Incident created:", res.data);
       return res.data;

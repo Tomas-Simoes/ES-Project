@@ -16,12 +16,4 @@ export class CreateIncidentDto {
   @IsEnum(IncidentStatus)
   @IsOptional()
   status?: IncidentStatus;
-
-  @IsOptional()
-  @IsUUID()
-  teamId?: string;
-  
-  @IsUUID()
-  @IsOptional()
-  ownerId?: string;
 }

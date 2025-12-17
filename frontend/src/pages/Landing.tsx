@@ -10,6 +10,10 @@ function LandingPage() {
   const { incident } = useCreate();
   const handleCreateIncident = async (data: CreateIncidentForm) => {
     console.log("Creating incident:", data);
+    delete data.ownerId;
+    delete data.teamId;
+    console.log("Data\n");
+    console.log(data);
     const success = await incident.createIncident(data);
     if (success) alert("Incident created successfully!" + success);
   };
