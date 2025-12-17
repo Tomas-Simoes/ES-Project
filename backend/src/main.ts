@@ -15,6 +15,17 @@ async function bootstrap() {
     console.log('REQ', req.method, req.url, 'BODY', req.body);
     next();
   });
+
+  app.enableCors({
+    origin: [
+      'http://localhost:5173/',  
+      'http://localhost:3000/', 
+      'https://seu-dominio-frontend.com/'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
