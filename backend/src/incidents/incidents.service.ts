@@ -86,8 +86,8 @@ export class IncidentsService {
         description: dto.description ?? '',
         status: statusToDb(dto.status) as any,
         priority: priorityToDb(dto.priority) as any,
-        teamId: dto.teamId,
-        ownerId: dto.ownerId,
+        teamId: dto.teamId ?? null,
+        ownerId: dto.ownerId ?? null,
       },
       select: {
         id: true, title: true, description: true, status: true, priority: true,

@@ -24,6 +24,7 @@ export function useMe() {
     try {
       setLoading(true);
       const res = await api.get("/api/auth/me");
+      console.log(res.data)
       setMe(res.data);
     } catch {
       localStorage.removeItem("token");

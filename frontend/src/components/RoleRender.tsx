@@ -15,6 +15,8 @@ export function RoleRender({
   const { me, loading } = useAuth();
 
   if (loading) return null; 
+  console.log(me?.name)
+  console.log(me?.role)
   if (!me) return <>{fallback}</>;
 
   return allowedRoles.includes(me.role)
