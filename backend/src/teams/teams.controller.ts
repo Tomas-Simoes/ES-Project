@@ -54,7 +54,7 @@ export class TeamsController {
 
   @Get('by-user/:userId')
   getByUser(@Param('userId') userId: string) {
-    return this.teamsService.getTeamByUserId(userId);
+    return this.service.getTeamByUserId(userId);
   }
 
   @Get(':id/incidents')
