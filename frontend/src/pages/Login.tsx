@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import Logo from "../assets/named_logo.png";
+import { loginUser } from "../services/auth";
+import { useAuth } from "../context/AuthContext";
 
 
 export default function Login() {
@@ -12,10 +14,39 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { refetch } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/");
+
+    try {
+      const res = await loginUser({ email, password });
+
+      const token = res.access_token ?? res.token ?? res.jwt;
+
+      if (!token) {
+        alert("Login failed: no token received");
+        return;
+      }
+
+      localStorage.setItem("token", token);
+
+      if (res.refresh_token) {
+        localStorage.setItem("refresh_token", res.refresh_token);
+      }
+
+      await refetch?.();
+
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      alert(
+        err?.response?.data?.message ??
+          err?.message ??
+          "Login failed"
+      );
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
