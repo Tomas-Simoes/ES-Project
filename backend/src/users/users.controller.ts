@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { UpdateUserRoleDto } from './dto/update-role.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -8,5 +9,13 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Patch(':id/role')
+  updateRole(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserRoleDto,
+  ) {
+    return this.usersService.updateRole(id, dto.role);
   }
 }

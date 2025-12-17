@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Role } from '@prisma/client';
+import { NotFoundException } from '@nestjs/common';
+
 
 @Injectable()
 export class UsersService {
@@ -16,6 +18,23 @@ export class UsersService {
     return this.prisma.user.findUnique({
       where: { email },
     });
+  }
+
+  async updateRole(userId: string, role: Role) {
+    try {
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data: { role },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      });
+    } catch {
+      throw new NotFoundException('User not found');
+    }
   }
 
   async create(data: {
