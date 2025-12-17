@@ -1,10 +1,14 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { AddRemoveTechnicianDto, SetTeamLeaderDto, TeamUpsertDto } from '../common/dto';
+import { TechniciansService } from '../technicians/technicians.service';
 
 @Controller('api/teams')
 export class TeamsController {
-  constructor(private readonly service: TeamsService) {}
+  constructor(
+    private readonly service: TeamsService,
+    private readonly techniciansService: TechniciansService
+  ) {}
 
   @Get()
   list() {
@@ -49,5 +53,10 @@ export class TeamsController {
   @Get(':id/incidents')
   incidents(@Param('id') id: string, @Query() q: any) {
     return this.service.listIncidents(id, q);
+  }
+
+  @Get(':teamId/metrics')
+  metricsForTeam(@Param('teamId') teamId: string, @Query() q: any) {
+    return this.techniciansService.metricsForTeam(teamId, q);
   }
 }

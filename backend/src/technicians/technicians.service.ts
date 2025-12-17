@@ -60,6 +60,94 @@ export class TechniciansService {
     }));
   }
 
+  async metricsForTeam(teamId: string, q: any) {
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const whereUser: any = { role: 'TECHNICIAN', teamId };
+
+  const techs = await this.prisma.user.findMany({
+    where: whereUser,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      teamId: true,
+      team: { select: { id: true, name: true, leaderId: true } },
+      incidentAssignments: {
+        select: {
+          incident: {
+            select: {
+              id: true,
+              status: true,
+              priority: true,
+              createdAt: true,
+              resolvedAt: true,
+              updatedAt: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
+
+  const incidents = techs
+    .flatMap(t => t.incidentAssignments.map(a => a.incident))
+    .filter(Boolean);
+
+  const totalTechs = techs.length;
+  const totalIncidents = incidents.length;
+
+  const openIncidents = incidents.filter(i => i.status === 'OPEN').length;
+  const inProgressIncidents = incidents.filter(i => i.status === 'IN_PROGRESS').length;
+
+  const resolvedToday = incidents.filter(
+    i => i.status === 'RESOLVED' && i.resolvedAt && i.resolvedAt >= startOfToday,
+  ).length;
+
+  const highPriorityCount = incidents.filter(i => i.priority === 'HIGH').length;
+
+  const avgResolutionTime = avgResolutionTimeStr(incidents);
+
+  const perTechWorkloads = techs.map(t => {
+    const tInc = t.incidentAssignments.map(a => a.incident).filter(Boolean);
+    const tTotal = tInc.length;
+    const tInProg = tInc.filter(i => i.status === 'IN_PROGRESS').length;
+    const tHigh = tInc.filter(i => i.priority === 'HIGH').length;
+
+    const score = (tInProg * 2) + tHigh;
+    return Math.min(100, Math.round((score / Math.max(1, tTotal)) * 100));
+  });
+
+  const workloadAvg = perTechWorkloads.length
+    ? Math.round(perTechWorkloads.reduce((a, b) => a + b, 0) / perTechWorkloads.length)
+    : 0;
+
+  const availableTechs = techs.filter(t => {
+    const tInc = t.incidentAssignments.map(a => a.incident).filter(Boolean);
+    const tInProg = tInc.filter(i => i.status === 'IN_PROGRESS').length;
+    return tInProg === 0;
+  }).length;
+
+  return {
+    team: techs[0]?.team ?? { id: teamId, name: null, leaderId: null },
+    totals: {
+      totalTechs,
+      availableTechs,
+      busyTechs: Math.max(0, totalTechs - availableTechs),
+      totalIncidents,
+      openIncidents,
+      inProgressIncidents,
+      resolvedToday,
+      highPriorityCount,
+      avgResolutionTime,
+      workloadAvgPercentage: workloadAvg,
+    },
+  };
+  }
+
   async metrics(q: any) {
     const now = new Date();
     const startOfToday = new Date(now);
@@ -156,3 +244,4 @@ function lastActivityStr(incidents: any[]) {
   const diffH = Math.floor(diffMin / 60);
   return `${diffH}h ago`;
 }
+
