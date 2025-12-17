@@ -19,7 +19,7 @@ export class AuthService {
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Credenciais inválidas');
 
-    const payload = { sub: user.id, name: user.name, email: user.email, role: user.role };
+    const payload = { sub: user.id, name: user.name, email: user.email, role: user.role, teamId: user.teamId };
 
     const access_token = await this.jwt.signAsync(payload);
 
@@ -34,7 +34,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, teamId: user.teamId},
     };
   }
 
@@ -63,6 +63,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      teamId: user.teamId,
     };
 
     const access_token = await this.jwt.signAsync(payload);
@@ -82,6 +83,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        teamId: user.teamId
       },
     };
   }
