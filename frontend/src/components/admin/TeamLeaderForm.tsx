@@ -2,19 +2,19 @@ import { FormButton } from "../form/FormButton";
 import { FormHeader } from "../form/FormHeader";
 import { Plus, Shield } from "lucide-react";
 import { useState } from "react";
-import type { Technician } from "../../types/user";
+import type { User } from "../../types/user";
 import type { TeamDTO } from "../../types/team";
 import type { CreateTeamLeaderForm } from "../../types/create";
 
 export const TeamLeaderForm = ({
   onSubmit,
   onCancel,
-  technicians,
+  users,
   teams, // Nova prop adicionada
 }: {
   onSubmit: (data: CreateTeamLeaderForm) => void;
   onCancel: () => void;
-  technicians: Technician[];
+  users: User[];
   teams: TeamDTO[];
 }) => {
   const [formData, setFormData] = useState<CreateTeamLeaderForm>({
@@ -69,7 +69,7 @@ export const TeamLeaderForm = ({
           className={selectClasses}
         >
           <option value="">-- Select a technician --</option>
-          {technicians.map((technician) => (
+          {users.map((technician) => (
             <option key={technician.id} value={technician.id}>
               {technician.name}
             </option>

@@ -15,7 +15,7 @@ export function useUsers(teamId?: string) {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const res = await axios.get<User[]>("/users", {
+        const res = await axios.get<User[]>("/api/users", {
           params: teamId ? { teamId } : undefined,
         });
         console.log("Fetched users:", res.data);

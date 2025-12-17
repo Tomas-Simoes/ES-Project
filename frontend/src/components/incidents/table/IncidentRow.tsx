@@ -5,11 +5,11 @@ import { Badge } from "../util/IncidentBadges";
 import { StatusIndicator } from "../util/StatusIndicator";
 import { useState, useRef, useEffect } from "react";
 
-// ... (Mantenha as interfaces Props como estão) ...
 interface PropsWithTechnicians {
   incident: IncidentDTO;
   technicians: Technician[];
   fetchIncidentsForTechnicians?: () => Promise<Record<string, Technician[]>>;
+  fetchIncidentsForTeams?: never;
   teams?: never;
   onAssignTechnicians?: (technicianIds: string[]) => void;
   onUnassignTechnicians?: (technicianId: string) => void;
@@ -20,6 +20,7 @@ interface PropsWithTeams {
   incident: IncidentDTO;
   technicians?: never;
   fetchIncidentsForTechnicians?: never;
+  fetchIncidentsForTeams?: (teamId: string) => Promise<IncidentDTO[]>;
   teams: TeamDTO[];
   onAssignTechnicians?: never;
   onUnassignTechnicians?: never;
@@ -63,30 +64,34 @@ export default function IncidentRow({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch ao montar o componente
+  // Carregamento Inicial de Atribuições
   useEffect(() => {
-    if (technicians && fetchIncidentsForTechnicians && firstLoadRef.current) {
-      const loadAssigned = async () => {
+    if (firstLoadRef.current) {
+      const loadInitialData = async () => {
         try {
-          const techMap = await fetchIncidentsForTechnicians();
-          const assignedTechs = techMap[incident.id] || [];
-          const assignedIds = assignedTechs.map((t) => t.id);
-          setSelectedIds(assignedIds);
+          if (technicians && fetchIncidentsForTechnicians) {
+            const techMap = await fetchIncidentsForTechnicians();
+            const assignedIds = (techMap[incident.id] || []).map((t) => t.id);
+            setSelectedIds(assignedIds);
+          } else if (teams) {
+            // Se o incidente já possui um time atribuído no objeto principal
+            if (incident.teamId) {
+              setSelectedIds([incident.teamId]);
+            }
+          }
         } catch (err) {
-          console.error(
-            `Failed to fetch technicians for incident ${incident.id}`,
-            err
-          );
-          setSelectedIds([]);
+          console.error("Error loading initial row data:", err);
         } finally {
           firstLoadRef.current = false;
         }
       };
-      loadAssigned();
+      loadInitialData();
     }
-  }, [technicians, fetchIncidentsForTechnicians, incident.id]);
+  }, [incident, technicians, teams, fetchIncidentsForTechnicians]);
+
   const handleToggleSelection = (id: string) => {
     if (technicians) {
+      // Lógica de múltiplos técnicos
       let newSelection: string[];
       if (selectedIds.includes(id)) {
         newSelection = selectedIds.filter((i) => i !== id);
@@ -97,16 +102,15 @@ export default function IncidentRow({
       }
       setSelectedIds(newSelection);
     } else if (teams) {
+      // Lógica de time único
+      console.log("Handle assign disparado para o time:", id);
       setSelectedIds([id]);
-      onAssignTeams?.(id);
-      setIsOpen(false);
+      onAssignTeams?.(id); // Dispara o handleAssign no Manager.tsx
+      setIsOpen(false); // Fecha o menu após selecionar
     }
   };
 
-  // Lógica para obter os nomes
   const items = technicians || teams || [];
-
-  // Cria a string "Nome, Nome" baseada nos IDs selecionados
   const selectedNames = items
     .filter((item) => selectedIds.includes(item.id))
     .map((item) => item.name)
@@ -127,12 +131,10 @@ export default function IncidentRow({
             onClick={() => setIsOpen(!isOpen)}
             className="w-full min-w-[200px] px-3 py-2 text-left text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           >
-            {/* --- ALTERAÇÃO 2: Mostrar os nomes aqui --- */}
             <span className="block truncate text-gray-700 dark:text-gray-300">
               {selectedNames ||
                 (technicians ? "Assign Technician" : "Assign Team")}
             </span>
-
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <svg
                 className={`h-5 w-5 text-gray-400 transition-transform ${
@@ -158,28 +160,28 @@ export default function IncidentRow({
                 </div>
               ) : (
                 items.map((item) => (
-                  <label
+                  <div
                     key={item.id}
+                    onClick={() => handleToggleSelection(item.id)}
                     className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition"
                   >
                     <input
-                      type="checkbox"
+                      type={technicians ? "checkbox" : "radio"}
+                      name={`incident-assign-${incident.id}`}
                       checked={selectedIds.includes(item.id)}
-                      onChange={() => handleToggleSelection(item.id)}
-                      className="h-4 w-4 accent-blue-500 border-gray-300 rounded focus:ring-blue-500"
-                      disabled={!!teams}
+                      onChange={() => {}} // Tratado pelo onClick da div
+                      className="h-4 w-4 accent-blue-500 border-gray-300 rounded focus:ring-blue-500 pointer-events-none"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       {item.name}
                     </span>
-                  </label>
+                  </div>
                 ))
               )}
             </div>
           )}
         </div>
       </td>
-      {/* ... (restante do código) ... */}
       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
         {incident.description}
       </td>

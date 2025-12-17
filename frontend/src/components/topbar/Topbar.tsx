@@ -43,8 +43,8 @@ function Topbar() {
             </NavLink>
           </RoleRender>
 
-          <RoleRender allowedRoles={["TEAM-LEADER"]}>
-            <NavLink to="/incidents" className={linkClass}>
+          <RoleRender allowedRoles={["TEAM_LEADER"]}>
+            <NavLink to="/my-team" className={linkClass}>
               My Team
             </NavLink>
           </RoleRender>
@@ -54,7 +54,6 @@ function Topbar() {
               Manager Dashboard
             </NavLink>
           </RoleRender>
-
 
           <RoleRender allowedRoles={["ADMIN", "MANAGER"]}>
             <NavLink to="/reports" className={linkClass}>
@@ -67,14 +66,12 @@ function Topbar() {
               Server Monitoring
             </NavLink>
           </RoleRender>
-  
 
           <RoleRender allowedRoles={["ADMIN"]}>
-          <NavLink to="/admin" className={linkClass}>
-            Admin
-          </NavLink>
+            <NavLink to="/admin" className={linkClass}>
+              Admin
+            </NavLink>
           </RoleRender>
-
         </nav>
 
         <div className="flex items-center gap-3">

@@ -9,24 +9,21 @@ export function useIncidents(teamId?: string) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    // Só buscamos incidentes do time se o teamId existir
-    if (!teamId) return;
-
     try {
       setLoading(true);
-      const res = await axios.get<IncidentDTO[]>(
-        `/api/teams/${teamId}/incidents`
-      );
+      const endpoint = teamId
+        ? `/api/teams/${teamId}/incidents`
+        : `/api/incidents`;
+      const res = await axios.get<IncidentDTO[]>(endpoint);
       setIncidents(Array.isArray(res.data) ? res.data : mockIncidents);
     } catch (err) {
-      console.error("Error fetching team incidents:", err);
+      console.error("Error fetching incidents:", err);
       setIncidents(mockIncidents);
     } finally {
       setLoading(false);
     }
   }, [teamId]);
 
-  // Função para buscar incidentes de UM técnico específico
   const fetchIncidentsForTechnician = useCallback(
     async (technicianId: string) => {
       try {
@@ -35,12 +32,25 @@ export function useIncidents(teamId?: string) {
         );
         return res.data;
       } catch (err) {
-        console.error(`Failed to fetch technician incidents:`, err);
+        console.error("Failed to fetch technician incidents:", err);
         return [];
       }
     },
     []
   );
+
+  // FIX: Corrigido o template literal incorreto
+  const fetchIncidentsForTeam = useCallback(async (teamId: string) => {
+    try {
+      const res = await axios.get<IncidentDTO[]>("/api/incidents", {
+        params: { teamId },
+      });
+      return res.data;
+    } catch (err) {
+      console.error("Failed to fetch team incidents:", err);
+      return [];
+    }
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -52,5 +62,6 @@ export function useIncidents(teamId?: string) {
     error,
     refetch: fetchData,
     fetchIncidentsForTechnician,
+    fetchIncidentsForTeam,
   };
 }

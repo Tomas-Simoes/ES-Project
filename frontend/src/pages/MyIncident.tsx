@@ -9,54 +9,51 @@ import { useIncidents } from "../hooks/incidents/useIncidents";
 import type { IncidentDTO } from "../types/incident";
 import Loading from "./Loading";
 
-export default function MyIncidents() {
+export default function MyIncident() {
   const [filter, setFilter] = useState<
     "all" | "open" | "in-progress" | "resolved"
   >("all");
   const [myIncidents, setMyIncidents] = useState<IncidentDTO[]>([]);
   const [isLocalLoading, setIsLocalLoading] = useState(true);
 
-  const { me, refetch: refetchMe } = useMe();
-  console.log(me);
+  const { me, loading: meLoading } = useMe();
   const { fetchIncidentsForTechnician } = useIncidents(me?.teamId);
 
-  // 1. Garante que temos o usuário
-  useEffect(() => {
-    if (!me) {
-      refetchMe();
-    }
-  }, [me, refetchMe]);
-
+  // FIX: Removido o refetchMe desnecessário que causava loop
+  // FIX: Adicionado controle de carregamento inicial
   useEffect(() => {
     let isMounted = true;
-    console.log("test");
+
     async function loadData() {
-      console.log("test2");
+      // Espera o me carregar primeiro
+      if (meLoading) return;
 
-      if (me?.userId) {
-        console.log("test1");
+      // Se não tem usuário após carregar, sai
+      if (!me?.userId || !me?.teamId) {
+        if (isMounted) setIsLocalLoading(false);
+        return;
+      }
 
-        try {
-          setIsLocalLoading(true);
-          console.log("Buscando incidentes para técnico:", me.id);
-          const data = await fetchIncidentsForTechnician(me.id);
-
-          if (isMounted) {
-            setMyIncidents(data || []);
-          }
-        } catch (error) {
-          console.error("Erro no carregamento local:", error);
-        } finally {
-          if (isMounted) setIsLocalLoading(false);
+      try {
+        setIsLocalLoading(true);
+        console.log("Buscando incidentes para técnico:", me.userId);
+        const data = await fetchIncidentsForTechnician(me.userId);
+        if (isMounted) {
+          setMyIncidents(data || []);
         }
+      } catch (error) {
+        console.error("Erro no carregamento local:", error);
+      } finally {
+        if (isMounted) setIsLocalLoading(false);
       }
     }
 
     loadData();
+
     return () => {
       isMounted = false;
     };
-  }, [me?.userId, fetchIncidentsForTechnician]);
+  }, [me?.userId, me?.teamId, meLoading, fetchIncidentsForTechnician]);
 
   const filteredIncidents = useMemo(() => {
     return myIncidents.filter((inc) => {
@@ -86,8 +83,8 @@ export default function MyIncidents() {
       .slice(0, 3);
   }, [myIncidents]);
 
-  // Renderização condicional
-  if (!me || isLocalLoading) {
+  // FIX: Verificação de loading mais precisa
+  if (meLoading || (isLocalLoading && !myIncidents.length)) {
     return <Loading />;
   }
 

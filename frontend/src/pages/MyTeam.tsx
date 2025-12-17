@@ -7,7 +7,6 @@ import Loading from "./Loading";
 import Error from "./Error";
 import { useEffect } from "react";
 
-
 /**
  ** Endpoint: GET /api/incidents?teamId=team-1
  * Fetches a list of incidents for a specific team.
@@ -87,15 +86,19 @@ import { useEffect } from "react";
  *   ...
  * ]
  */
+import { useMe } from "../hooks/auth/useMe";
 
-export default function Incidents() {
+export default function MyTeam() {
+  const { me, loading: meLoading } = useMe();
+
+  const teamId = me?.teamId;
+
   const {
     incidents,
     loading: incidentLoading,
     error: incidentError,
-    // refetch: refetchIncidents,
     fetchTechniciansForIncidents,
-  } = useIncidents("e3070eef-7ed8-4ce8-9937-6ca8461cc613"); // TODO: Pass teamId based on logged-in user
+  } = useIncidents(teamId);
 
   const {
     technicians,
@@ -103,7 +106,7 @@ export default function Incidents() {
     refreshing: UI_techRefreshing,
     error: techError,
     refetch: refetchTechs,
-  } = useTechniciansWithMetrics("e3070eef-7ed8-4ce8-9937-6ca8461cc613"); // TODO: Pass teamId based on logged-in user
+  } = useTechniciansWithMetrics(teamId);
 
   const {
     assignTechnicians,
@@ -111,25 +114,18 @@ export default function Incidents() {
     error: assignError,
   } = useAssignTechnicians();
 
-  const handleAssign = async (incidentId: string, techIds: string[]) => {
-    const success = await assignTechnicians(incidentId, techIds);
-    if (success) refetchTechs?.(true);
-  };
+  useEffect(() => {
+    if (!teamId) return;
+    fetchTechniciansForIncidents().then(console.log);
+  }, [teamId, fetchTechniciansForIncidents]);
 
-  const handleUnassign = async (incidentId: string, techId: string) => {
-    const sucess = await unassignTechnicians(incidentId, techId);
-
-    if (sucess) refetchTechs?.(true);
-  };
+  if (meLoading) return <Loading />;
 
   if (incidentError || techError || assignError)
     return (
       <Error message={incidentError ?? techError ?? assignError ?? undefined} />
     );
 
-  useEffect(() => {
-    fetchTechniciansForIncidents().then(console.log);
-  }, [fetchTechniciansForIncidents]);
   return (
     <div className="space-y-6 relative">
       {(incidentLoading || techLoading) && (
@@ -150,8 +146,14 @@ export default function Incidents() {
         incidents={incidents}
         technicians={technicians}
         fetchIncidentsForTechnicians={fetchTechniciansForIncidents}
-        onAssignTechnicians={handleAssign}
-        onUnassignTechnicians={handleUnassign}
+        onAssignTechnicians={async (incidentId, techIds) => {
+          const success = await assignTechnicians(incidentId, techIds);
+          if (success) refetchTechs?.(true);
+        }}
+        onUnassignTechnicians={async (incidentId, techId) => {
+          const success = await unassignTechnicians(incidentId, techId);
+          if (success) refetchTechs?.(true);
+        }}
       />
     </div>
   );

@@ -1,6 +1,18 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { IncidentsService } from './incidents.service';
-import { AssignTechniciansDto, CreateIncidentDto, UpdateIncidentDto } from '../common/dto';
+import {
+  AssignTechniciansDto,
+  CreateIncidentDto,
+  UpdateIncidentDto,
+} from '../common/dto';
 
 @Controller('api/incidents')
 export class IncidentsController {
@@ -18,8 +30,6 @@ export class IncidentsController {
 
   @Post()
   create(@Body() dto: CreateIncidentDto) {
-    console.log("TESTE MALUSCO");
-    console.log('BODY:', dto);
     return this.service.create(dto);
   }
 

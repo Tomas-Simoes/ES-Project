@@ -7,6 +7,8 @@ interface PropsWithTechnicians {
   incidents: IncidentDTO[];
   technicians: Technician[];
   fetchIncidentsForTechnicians?: () => Promise<Record<string, Technician[]>>;
+  fetchIncidentsForTeams?: never;
+
   teams?: never;
   onAssignTechnicians?: (incidentId: string, technicianIds: string[]) => void;
   onUnassignTechnicians?: (incidentId: string, technicianId: string) => void;
@@ -17,6 +19,7 @@ interface PropsWithTeams {
   incidents: IncidentDTO[];
   technicians?: never;
   fetchIncidentsForTechnicians?: never;
+  fetchIncidentsForTeams?: () => Promise<Record<string, TeamDTO[]>>;
   teams: TeamDTO[];
   onAssignTechnicians?: never;
   onUnassignTechnicians?: never;

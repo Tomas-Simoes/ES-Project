@@ -12,6 +12,7 @@ import { TeamForm } from "../components/admin/TeamForm";
 import { useCreate } from "../hooks/create/useCreate";
 import { useTechnicians } from "../hooks/technicians/useTechnicians";
 import { useTeams } from "../hooks/teams/useTeams";
+import { useUsers } from "../hooks/users/useUsers";
 
 const ActionCard = ({
   icon: Icon,
@@ -53,6 +54,7 @@ export default function AdminManagement() {
   const { team, teamLeader, incident } = useCreate();
   const { technicians } = useTechnicians();
   const { teams } = useTeams();
+  const { users } = useUsers();
 
   const handleCreateIncident = async (data: CreateIncidentForm) => {
     console.log("Creating incident:", data);
@@ -62,7 +64,10 @@ export default function AdminManagement() {
 
   const handleCreateTeamLeader = async (data: CreateTeamLeaderForm) => {
     console.log("Creating team leader:", data);
-    const success = await teamLeader.createTeamLeader(data);
+    const success = await teamLeader.createTeamLeader(
+      data.teamId,
+      data.technicianId
+    );
     if (success) alert("Incident created successfully!" + success);
   };
 
@@ -135,7 +140,7 @@ export default function AdminManagement() {
               <TeamLeaderForm
                 onSubmit={handleCreateTeamLeader}
                 onCancel={() => setActiveForm(null)}
-                technicians={technicians}
+                users={users}
                 teams={teams}
               />
             )}

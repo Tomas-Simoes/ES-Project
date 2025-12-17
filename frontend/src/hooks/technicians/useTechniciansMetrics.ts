@@ -21,7 +21,7 @@ export function useTechniciansWithMetrics(teamId?: string) {
         }
 
         setError(null);
-
+        console.log("yyy" + teamId);
         const res = await axios.get<TechnicianWithMetrics[]>(
           "/api/technician/metrics",
           {

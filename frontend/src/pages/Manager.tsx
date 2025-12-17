@@ -1,17 +1,22 @@
+import { useEffect } from "react";
 import TeamsOverview from "../components/teams/TeamsOverview";
 import IncidentTable from "../components/incidents/table/IncidentTable";
 import { useTeams } from "../hooks/teams/useTeams";
 import { useAssignTeams } from "../hooks/teams/useAssignTeams";
 import { useIncidents } from "../hooks/incidents/useIncidents";
+import { useMe } from "../hooks/auth/useMe";
 import Error from "./Error";
 import Loading from "./Loading";
 
 export default function Manager() {
+  const { me, refetch: refetchMe } = useMe();
+
   const {
     incidents,
     loading: incidentLoading,
     error: incidentError,
-  } = useIncidents("d769f4bc-06b1-4c3a-952d-9aa62682117a"); // TODO: Pass teamId based on logged-in user
+    fetchIncidentsForTeam,
+  } = useIncidents(me?.teamId);
 
   const {
     teams,
@@ -22,14 +27,23 @@ export default function Manager() {
 
   const { assignTeam, error: assignError } = useAssignTeams();
 
+  // Garante que temos o usuário
+  useEffect(() => {
+    if (!me) {
+      refetchMe();
+    }
+  }, [me, refetchMe]);
+
   const handleAssign = async (incidentId: string, teamId: string) => {
+    console.log("handle assign");
     const success = await assignTeam(incidentId, teamId);
     if (success) {
       refetch?.();
     }
   };
 
-  if (incidentLoading || teamsLoading) return <Loading />;
+  if (!me || incidentLoading || teamsLoading) return <Loading />;
+
   if (incidentError || teamsError || assignError)
     return (
       <Error
@@ -49,6 +63,7 @@ export default function Manager() {
       </header>
 
       <TeamsOverview />
+
       <IncidentTable
         incidents={incidents}
         teams={teams}
