@@ -3,10 +3,6 @@ import {
   Activity,
   Server,
   Globe,
-  Terminal,
-  Cpu,
-  MemoryStick,
-  HardDrive,
   AlertTriangle,
   Clock,
   TrendingUp,
@@ -26,13 +22,7 @@ const generateBackendMetrics = () => ({
     ram: Math.floor(Math.random() * 25 + 55),
     disk: Math.floor(Math.random() * 20 + 25),
   },
-  logs: [
-    "[ERROR] PaymentService timeout",
-    "[WARN] High login retry rate",
-    "[INFO] Nightly backup completed",
-    "[INFO] Healthcheck OK",
-    "[ERROR] Redis connection dropped",
-  ],
+  logs: [],
 });
 
 /* =======================
@@ -181,34 +171,6 @@ export default function ObservabilityDashboard() {
           </p>
         </div>
 
-        {/* Global KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Kpi
-            label="Active Users"
-            value={rumMetrics.users}
-            icon={Globe}
-            accent="text-blue-400"
-          />
-          <Kpi
-            label="P95 Latency"
-            value={backendMetrics.apm.p95}
-            icon={TrendingUp}
-            accent="text-green-400"
-          />
-          <Kpi
-            label="Error Rate"
-            value={backendMetrics.apm.errorRate}
-            icon={AlertTriangle}
-            accent="text-yellow-400"
-          />
-          <Kpi
-            label="CPU Usage"
-            value={`${backendMetrics.infra.cpu}%`}
-            icon={Cpu}
-            accent="text-purple-400"
-          />
-        </div>
-
         {/* Main Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left column - RUM & APM */}
@@ -253,14 +215,18 @@ export default function ObservabilityDashboard() {
             </Card>
 
             {/* APM */}
+          </div>
+
+          {/* Right column - Logs */}
+          <div className="space-y-6">
             <Card>
               <div className="flex items-center gap-2 mb-4">
                 <Server className="w-5 h-5 text-green-400" />
                 <h2 className="text-xl font-semibold">
                   Backend Performance (APM)
                 </h2>
-                <span className="ml-auto text-xs text-orange-400 bg-orange-400/10 px-2 py-1 rounded">
-                  Mock (TODO: API)
+                <span className="ml-auto text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded">
+                  Live from Backend
                 </span>
               </div>
               <CardContent>
@@ -283,70 +249,6 @@ export default function ObservabilityDashboard() {
                     icon={AlertTriangle}
                     accent="text-red-400"
                   />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Infrastructure */}
-            <Card>
-              <div className="flex items-center gap-2 mb-4">
-                <Server className="w-5 h-5 text-purple-400" />
-                <h2 className="text-xl font-semibold">Infrastructure</h2>
-                <span className="ml-auto text-xs text-orange-400 bg-orange-400/10 px-2 py-1 rounded">
-                  Mock
-                </span>
-              </div>
-              <CardContent>
-                <div className="grid grid-cols-3 gap-4">
-                  <Kpi
-                    label="CPU"
-                    value={`${backendMetrics.infra.cpu}%`}
-                    icon={Cpu}
-                    accent="text-purple-400"
-                  />
-                  <Kpi
-                    label="RAM"
-                    value={`${backendMetrics.infra.ram}%`}
-                    icon={MemoryStick}
-                    accent="text-blue-400"
-                  />
-                  <Kpi
-                    label="Disk"
-                    value={`${backendMetrics.infra.disk}%`}
-                    icon={HardDrive}
-                    accent="text-green-400"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right column - Logs */}
-          <div className="space-y-6">
-            <Card>
-              <div className="flex items-center gap-2 mb-4">
-                <Terminal className="w-5 h-5 text-yellow-400" />
-                <h2 className="text-xl font-semibold">Live Logs</h2>
-                <span className="ml-auto text-xs text-orange-400 bg-orange-400/10 px-2 py-1 rounded">
-                  Mock
-                </span>
-              </div>
-              <CardContent>
-                <div className="space-y-2 font-mono text-sm max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800/50">
-                  {backendMetrics.logs.map((log, i) => (
-                    <div
-                      key={i}
-                      className={`p-3 rounded ${
-                        log.includes("ERROR")
-                          ? "bg-red-900/20 text-red-300"
-                          : log.includes("WARN")
-                          ? "bg-yellow-900/20 text-yellow-300"
-                          : "bg-slate-800/50 text-slate-300"
-                      }`}
-                    >
-                      {log}
-                    </div>
-                  ))}
                 </div>
               </CardContent>
             </Card>

@@ -29,12 +29,12 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/manager-dashboard" element={<Manager />} />
 
             <Route element={<RequireAuth />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/incidents" element={<Incidents />} />
               <Route path="/my-incidents" element={<MyIncidents />} />
-              <Route path="/manager-dashboard" element={<Manager />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/server-monitoring" element={<Monitoring />} />
               <Route path="/admin" element={<Admin />} />

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../../axios";
 
 export type Me = {
-  id: string;
+  userId: string;
   name: string;
   email: string;
   role: string;

@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Role } from '@prisma/client';
 import { NotFoundException } from '@nestjs/common';
 
-
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -48,15 +47,12 @@ export class UsersService {
         name: data.name,
         email: data.email,
         passwordHash: data.passwordHash,
-        role: data.role ?? Role.VIEWER,
+        role: data.role ?? Role.TECHNICIAN,
       },
     });
   }
 
-  async setRefreshTokenHash(
-    userId: string,
-    refreshTokenHash: string | null,
-  ) {
+  async setRefreshTokenHash(userId: string, refreshTokenHash: string | null) {
     return this.prisma.user.update({
       where: { id: userId },
       data: { refreshTokenHash },
