@@ -10,9 +10,7 @@ export function useAssignTeams() {
     setLoading(true);
     setError(null);
     try {
-      await axios.patch(`/api/incidents/${incidentId}/assigments`, {
-        assignment: assigment,
-      });
+      await axios.post(`/api/teams/${assigment}/incidents/${incidentId}`);
       return true;
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);

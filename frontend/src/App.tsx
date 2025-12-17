@@ -8,7 +8,7 @@ import Incidents from "./pages/MyIncident";
 import Reports from "./pages/Reports";
 import Logout from "./pages/Logout";
 import NotFound from "./pages/NotFound";
-import MyIncidents from "./pages/MyTeam";
+import MyIncidents from "./pages/MyIncident";
 import Manager from "./pages/Manager";
 import Monitoring from "./pages/Monitoring";
 import Admin from "./pages/Admin";
@@ -30,9 +30,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/logout" element={<Logout />} />
-
-            <Route path="*" element={<NotFound />} />
             <Route path="/manager-dashboard" element={<Manager />} />
+            <Route path="*" element={<NotFound />} />
 
             <Route element={<RequireAuth />}>
               <Route path="/dashboard" element={<Dashboard />} />
