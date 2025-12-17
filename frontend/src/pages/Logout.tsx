@@ -1,8 +1,28 @@
-// src/pages/Logout.js
 import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { logoutUser } from "../services/auth";
+import { useAuth } from "../context/AuthContext"; 
 
 function Logout() {
+  const navigate = useNavigate();
+  const { refetch } = useAuth();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await logoutUser(); // tenta invalidar refresh token no backend
+      } catch {
+        // mesmo que falhe (token expirado, etc), limpamos localmente
+      } finally {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refresh_token");
+        await refetch(); // atualiza me -> null
+        navigate("/login", { replace: true });
+      }
+    })();
+  }, [navigate, refetch]);
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
