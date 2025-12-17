@@ -100,6 +100,8 @@ export default function MyTeam() {
     fetchTechniciansForIncidents,
   } = useIncidents(teamId);
 
+  console.log(teamId);
+  console.log(me);
   const {
     technicians,
     loading: techLoading,
