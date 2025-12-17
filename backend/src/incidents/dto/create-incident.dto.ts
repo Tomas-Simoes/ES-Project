@@ -13,11 +13,11 @@ export class CreateIncidentDto {
   @IsEnum(IncidentPriority)
   priority!: IncidentPriority;
 
-  @IsEnum(IncidentStatus)
-  @IsOptional()
-  status?: IncidentStatus;
+  // @IsEnum(IncidentStatus)
+  // @IsOptional()
+  // status?: IncidentStatus;
 
-  @IsUUID()
-  @IsOptional()
-  ownerId?: string;
+  // @IsUUID()
+  // @IsOptional()
+  // ownerId?: string;
 }
