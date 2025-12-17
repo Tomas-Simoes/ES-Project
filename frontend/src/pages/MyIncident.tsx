@@ -19,8 +19,7 @@ export default function MyIncident() {
   const { me, loading: meLoading } = useMe();
   const { fetchIncidentsForTechnician } = useIncidents(me?.teamId);
 
-  // FIX: Removido o refetchMe desnecessário que causava loop
-  // FIX: Adicionado controle de carregamento inicial
+
   useEffect(() => {
     let isMounted = true;
 

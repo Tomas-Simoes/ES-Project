@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateIncidentDto, UpdateIncidentDto } from '../common/dto';
 import { priorityToDb, priorityToFrontend, statusToDb, statusToFrontend } from '../common/mappers';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class IncidentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,
+    private emailService: EmailService
+  ) {}
 
   async findAll(q: any) {
     const where: any = {};
@@ -216,13 +219,13 @@ async createForTeam(teamId: string, dto: CreateIncidentDto) {
   async assignTechnicians(incidentId: string, technicianIds: string[]) {
     const incident = await this.prisma.incident.findUnique({
       where: { id: incidentId },
-      select: { id: true, teamId: true },
+      select: { id: true, teamId: true, title: true },
     });
     if (!incident) throw new Error('NOT_FOUND');
 
     const techs = await this.prisma.user.findMany({
       where: { id: { in: technicianIds }, role: 'TECHNICIAN' },
-      select: { id: true, teamId: true },
+      select: { id: true, teamId: true, email: true, name: true},
     });
 
     for (const t of techs) {
@@ -236,6 +239,10 @@ async createForTeam(teamId: string, dto: CreateIncidentDto) {
       skipDuplicates: true,
     });
 
+    for (const t of techs) {
+      this.emailService.sendIncidentAssigned(t.email, t.name, incident.title)
+      .catch((err) => console.error(`Erro ao enviar email para ${t.email}:`, err));
+    }
     return { ok: true };
   }
 
