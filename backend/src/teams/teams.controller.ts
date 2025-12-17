@@ -79,14 +79,14 @@ export class TeamsController {
     return this.incidentsService.addIncidentToTeam(teamId, incidentId);
   }
   
+  @Get('metrics')
+  metricsForAllTeams(@Query() q: any) {
+    return this.techniciansService.metricsForAllTeams(q);
+  }
 
   @Get(':teamId/metrics')
   metricsForTeam(@Param('teamId') teamId: string, @Query() q: any) {
     return this.techniciansService.metricsForTeam(teamId, q);
   }
 
-  @Get('metrics')
-  metricsForAllTeams(@Query() q: any) {
-    return this.techniciansService.metricsForAllTeams(q);
-  }
 }

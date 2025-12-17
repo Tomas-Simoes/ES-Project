@@ -134,8 +134,6 @@ export class TeamsService {
       data: { teamId: null },
     });
 
-    // opcional: também remover assignments de incidents dessa team
-
     return { ok: true };
   }
 
