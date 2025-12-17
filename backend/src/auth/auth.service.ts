@@ -44,45 +44,45 @@ export class AuthService {
   }
 
   async register(name: string, email: string, password: string) {
-  const existing = await this.usersService.findByEmail(email);
-  if (existing) {
-    throw new ConflictException('Email já registado');
-  }
+    const existing = await this.usersService.findByEmail(email);
+    if (existing) {
+      throw new ConflictException('Email já registado');
+    }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
-  const user = await this.usersService.create({
-    name,
-    email,
-    passwordHash,
-    role: Role.VIEWER,
-  });
+    const user = await this.usersService.create({
+      name,
+      email,
+      passwordHash,
+      role: Role.TECHNICIAN,
+    });
 
-  const payload = {
-    sub: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  };
-
-  const access_token = await this.jwt.signAsync(payload);
-  const refresh_token = await this.jwt.signAsync(
-    { sub: user.id },
-    { expiresIn: '7d' },
-  );
-
-  const refreshHash = await bcrypt.hash(refresh_token, 10);
-  await this.usersService.setRefreshTokenHash(user.id, refreshHash);
-
-  return {
-    access_token,
-    refresh_token,
-    user: {
-      id: user.id,
+    const payload = {
+      sub: user.id,
       name: user.name,
       email: user.email,
       role: user.role,
-    },
+    };
+
+    const access_token = await this.jwt.signAsync(payload);
+    const refresh_token = await this.jwt.signAsync(
+      { sub: user.id },
+      { expiresIn: '7d' },
+    );
+
+    const refreshHash = await bcrypt.hash(refresh_token, 10);
+    await this.usersService.setRefreshTokenHash(user.id, refreshHash);
+
+    return {
+      access_token,
+      refresh_token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     };
   }
 }

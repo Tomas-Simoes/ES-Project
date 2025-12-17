@@ -1,36 +1,95 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import MyIncidentStats from "../components/myIncidents/MyIncidentStats";
 import IncidentList from "../components/myIncidents/IncidentList";
 import UrgentPanel from "../components/myIncidents/UrgentPanel";
 import WeeklySummary from "../components/myIncidents/WeeklySummary";
 import PriorityBreakdown from "../components/myIncidents/PriorityBreakdown";
-import { mockMyIncidents } from "../mocks/my-incidents";
+import { useMe } from "../hooks/auth/useMe";
+import { useIncidents } from "../hooks/incidents/useIncidents";
+import type { IncidentDTO } from "../types/incident";
+import Loading from "./Loading";
 
 export default function MyIncidents() {
   const [filter, setFilter] = useState<
     "all" | "open" | "in-progress" | "resolved"
   >("all");
+  const [myIncidents, setMyIncidents] = useState<IncidentDTO[]>([]);
+  const [isLocalLoading, setIsLocalLoading] = useState(true);
 
-  const myIncidents = mockMyIncidents;
+  const { me, refetch: refetchMe } = useMe();
+  console.log(me);
+  const { fetchIncidentsForTechnician } = useIncidents(me?.teamId);
 
-  const filteredIncidents = myIncidents.filter((inc) => {
-    if (filter === "all") return true;
-    if (filter === "open") return inc.status === "Open";
-    if (filter === "in-progress") return inc.status === "In Progress";
-    if (filter === "resolved") return inc.status === "Resolved";
-    return true;
-  });
+  // 1. Garante que temos o usuário
+  useEffect(() => {
+    if (!me) {
+      refetchMe();
+    }
+  }, [me, refetchMe]);
 
-  const stats = {
-    total: myIncidents.length,
-    open: myIncidents.filter((i) => i.status === "Open").length,
-    inProgress: myIncidents.filter((i) => i.status === "In Progress").length,
-    resolved: myIncidents.filter((i) => i.status === "Resolved").length,
-  };
+  useEffect(() => {
+    let isMounted = true;
+    console.log("test");
+    async function loadData() {
+      console.log("test2");
 
-  const urgentIncidents = myIncidents
-    .filter((i) => i.priority === "High" && i.status !== "Resolved")
-    .slice(0, 3);
+      if (me?.userId) {
+        console.log("test1");
+
+        try {
+          setIsLocalLoading(true);
+          console.log("Buscando incidentes para técnico:", me.id);
+          const data = await fetchIncidentsForTechnician(me.id);
+
+          if (isMounted) {
+            setMyIncidents(data || []);
+          }
+        } catch (error) {
+          console.error("Erro no carregamento local:", error);
+        } finally {
+          if (isMounted) setIsLocalLoading(false);
+        }
+      }
+    }
+
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, [me?.userId, fetchIncidentsForTechnician]);
+
+  const filteredIncidents = useMemo(() => {
+    return myIncidents.filter((inc) => {
+      if (filter === "all") return true;
+      const statusMap: Record<string, string> = {
+        open: "Open",
+        "in-progress": "In Progress",
+        resolved: "Resolved",
+      };
+      return inc.status === statusMap[filter];
+    });
+  }, [myIncidents, filter]);
+
+  const stats = useMemo(
+    () => ({
+      total: myIncidents.length,
+      open: myIncidents.filter((i) => i.status === "Open").length,
+      inProgress: myIncidents.filter((i) => i.status === "In Progress").length,
+      resolved: myIncidents.filter((i) => i.status === "Resolved").length,
+    }),
+    [myIncidents]
+  );
+
+  const urgentIncidents = useMemo(() => {
+    return myIncidents
+      .filter((i) => i.priority === "High" && i.status !== "Resolved")
+      .slice(0, 3);
+  }, [myIncidents]);
+
+  // Renderização condicional
+  if (!me || isLocalLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="space-y-6">
