@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
+import 'dotenv/config';
 
 
 async function bootstrap() {
@@ -10,7 +11,6 @@ async function bootstrap() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // ✅ log agora já com body parsed
   app.use((req, _res, next) => {
     console.log('REQ', req.method, req.url, 'BODY', req.body);
     next();
