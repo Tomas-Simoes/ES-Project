@@ -18,6 +18,7 @@ export class IncidentsController {
 
   @Post()
   create(@Body() dto: CreateIncidentDto) {
+    console.log("TESTE MALUSCO");
     console.log('BODY:', dto);
     return this.service.create(dto);
   }
