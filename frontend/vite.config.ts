@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      "/api": "https://es-project-production.up.railway.app",
+      "/api": "http://localhost:3000",
     },
   },
 });

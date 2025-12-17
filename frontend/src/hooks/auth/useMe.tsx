@@ -23,7 +23,9 @@ export function useMe() {
 
     try {
       setLoading(true);
+      console.log("useMe");
       const res = await api.get("/api/auth/me");
+      console.log("DATA")
       console.log(res.data)
       setMe(res.data);
     } catch {

@@ -7,8 +7,8 @@ export class CreateIncidentDto {
   @IsString() priority!: string;
   @IsString() status!: string;
 
-  @IsUUID() teamId!: string;
-  @IsUUID() ownerId!: string;
+  @IsUUID() @IsOptional() teamId!: string;
+  @IsUUID() @IsOptional() ownerId!: string;
 }
 
 export class UpdateIncidentDto {

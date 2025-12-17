@@ -37,11 +37,11 @@ export function useCreateIncident() {
         status: data.status,
         priority: data.priority,
       };
-      console.log("Payload\n");
-      console.log(payload);
 
       
-      const res = await axios.post("/api/incidents", payload);
+      const res = await axios.post('/api/incidents', payload, {
+        headers: { 'Content-Type': 'application/json' },
+      });
       console.log("Incident created:", res.data);
       return res.data;
     } catch (err: unknown) {
