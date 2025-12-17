@@ -4,7 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import 'dotenv/config';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -18,9 +17,9 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://localhost:5173/',  
-      'http://localhost:3000/', 
-      'https://seu-dominio-frontend.com/'
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://seu-dominio-frontend.com',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -31,4 +30,3 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();
-
