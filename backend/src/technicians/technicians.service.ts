@@ -153,6 +153,11 @@ export class TechniciansService {
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
 
+  const teams = await this.prisma.team.findMany({
+    select: { id: true, name: true, leaderId: true },
+    orderBy: { name: 'asc' },
+  });
+
   const techs = await this.prisma.user.findMany({
     where: { role: 'TECHNICIAN' },
     select: {
@@ -160,7 +165,6 @@ export class TechniciansService {
       name: true,
       email: true,
       teamId: true,
-      team: { select: { id: true, name: true, leaderId: true } },
       incidentAssignments: {
         select: {
           incident: {
@@ -179,15 +183,33 @@ export class TechniciansService {
     orderBy: { name: 'asc' },
   });
 
-  const teamsMap = new Map<string, typeof techs>();
-
+  const techsByTeamId = new Map<string, typeof techs>();
   for (const t of techs) {
-    const key = t.teamId ?? 'NO_TEAM';
-    if (!teamsMap.has(key)) teamsMap.set(key, []);
-    teamsMap.get(key)!.push(t);
+    if (!t.teamId) continue;
+    if (!techsByTeamId.has(t.teamId)) techsByTeamId.set(t.teamId, []);
+    techsByTeamId.get(t.teamId)!.push(t);
   }
 
-  const result = Array.from(teamsMap.values()).map(teamTechs => {
+  const emptyTotals = () => ({
+    totalTechs: 0,
+    availableTechs: 0,
+    busyTechs: 0,
+    totalIncidents: 0,
+    openIncidents: 0,
+    inProgressIncidents: 0,
+    resolvedToday: 0,
+    highPriorityCount: 0,
+    avgResolutionTime: '0m',
+    workloadAvgPercentage: 0,
+  });
+
+  const result = teams.map(team => {
+    const teamTechs = techsByTeamId.get(team.id) ?? [];
+
+    if (teamTechs.length === 0) {
+      return { team, totals: emptyTotals() };
+    }
+
     const incidents = teamTechs
       .flatMap(t => t.incidentAssignments.map(a => a.incident))
       .filter(Boolean);
@@ -204,7 +226,7 @@ export class TechniciansService {
 
     const highPriorityCount = incidents.filter(i => i.priority === 'HIGH').length;
 
-    const avgResolutionTime = avgResolutionTimeStr(incidents);
+    const avgResolutionTime = totalIncidents ? avgResolutionTimeStr(incidents) : '0m';
 
     const perTechWorkloads = teamTechs.map(t => {
       const tInc = t.incidentAssignments.map(a => a.incident).filter(Boolean);
@@ -227,7 +249,7 @@ export class TechniciansService {
     }).length;
 
     return {
-      team: teamTechs[0]?.team ?? { id: null, name: null, leaderId: null },
+      team,
       totals: {
         totalTechs,
         availableTechs,
@@ -243,8 +265,9 @@ export class TechniciansService {
     };
   });
 
-  return result; 
+    return result;
   }
+
 
 
   async metrics(q: any) {
