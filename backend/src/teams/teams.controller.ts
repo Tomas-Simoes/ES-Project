@@ -52,6 +52,11 @@ export class TeamsController {
     return this.service.listTechnicians(id);
   }
 
+  @Get('by-user/:userId')
+  getByUser(@Param('userId') userId: string) {
+    return this.teamsService.getTeamByUserId(userId);
+  }
+
   @Get(':id/incidents')
   incidents(@Param('id') id: string, @Query() q: any) {
     return this.service.listIncidents(id, q);

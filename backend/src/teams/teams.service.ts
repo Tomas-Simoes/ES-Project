@@ -18,6 +18,34 @@ export class TeamsService {
     });
   }
 
+  async getTeamByUserId(userId: string) {
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, teamId: true },
+  });
+
+  if (!user) throw new Error('USER_NOT_FOUND');
+  if (!user.teamId) return null; // user sem equipa
+
+  const team = await this.prisma.team.findUnique({
+    where: { id: user.teamId },
+    select: {
+      id: true,
+      name: true,
+      leaderId: true,
+      leader: { select: { id: true, name: true, email: true } },
+      technicians: { select: { id: true, name: true, email: true, teamId: true, role: true } },
+    },
+  });
+
+  if (!team) throw new Error('TEAM_NOT_FOUND');
+
+  return {
+    ...team,
+    technicians: team.technicians.map(t => ({ ...t, role: 'technician' })),
+  };
+  }
+
   async get(id: string) {
     const team = await this.prisma.team.findUnique({
       where: { id },
