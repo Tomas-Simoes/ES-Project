@@ -5,7 +5,6 @@ import Logo from "../assets/logo.png";
 import { loginUser } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
 
-
 export default function Login() {
   if (localStorage.getItem("token")) {
     return <Navigate to="/dashboard" replace />;
@@ -39,14 +38,9 @@ export default function Login() {
 
       navigate("/dashboard", { replace: true });
     } catch (err: any) {
-      alert(
-        err?.response?.data?.message ??
-          err?.message ??
-          "Login failed"
-      );
+      alert(err?.response?.data?.message ?? err?.message ?? "Login failed");
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4">

@@ -39,7 +39,6 @@ export function useIncidents(teamId?: string) {
     []
   );
 
-  // FIX: Corrigido o template literal incorreto
   const fetchIncidentsForTeam = useCallback(async (teamId: string) => {
     try {
       const res = await axios.get<IncidentDTO[]>("/api/incidents", {

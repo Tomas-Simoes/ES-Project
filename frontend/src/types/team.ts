@@ -18,3 +18,19 @@ export type TeamDTO = TeamBase & {
   leader: User;
   technicians: User[];
 };
+
+export interface TeamWithMetrics {
+  team: TeamBase;
+  totals: {
+    totalTechs: number;
+    availableTechs: number;
+    busyTechs: number;
+    totalIncidents: number;
+    openIncidents: number;
+    inProgressIncidents: number;
+    resolvedToday: number;
+    highPriorityCount: number;
+    avgResolutionTime: string;
+    workloadAvgPercentage: number;
+  };
+}

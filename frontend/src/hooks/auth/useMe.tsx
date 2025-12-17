@@ -23,11 +23,30 @@ export function useMe() {
 
     try {
       setLoading(true);
-      console.log("useMe");
-      const res = await api.get("/api/auth/me");
-      console.log("DATA")
-      console.log(res.data)
-      setMe(res.data);
+
+      const res = await api.get<Me>("/api/auth/me");
+      let meData = res.data;
+
+      if (!meData.teamId) {
+        try {
+          console.log(meData.userId);
+          const teamRes = await api.get<{ teamId: string }>(
+            `/api/teams/by-user/${meData.userId}`
+          );
+
+          console.log(teamRes.data);
+
+          meData = {
+            ...meData,
+            teamId: teamRes.data.teamId,
+          };
+        } catch (error) {
+          console.error("Erro ao buscar equipa:", error);
+        }
+      }
+
+      // 3️⃣ Guardar objeto completo
+      setMe(meData);
     } catch {
       localStorage.removeItem("token");
       setMe(null);

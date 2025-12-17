@@ -97,7 +97,7 @@ export default function MyTeam() {
     incidents,
     loading: incidentLoading,
     error: incidentError,
-    fetchTechniciansForIncidents,
+    fetchIncidentsForTechnician,
   } = useIncidents(teamId);
 
   console.log(teamId);
@@ -116,10 +116,10 @@ export default function MyTeam() {
     error: assignError,
   } = useAssignTechnicians();
 
-  useEffect(() => {
-    if (!teamId) return;
-    fetchTechniciansForIncidents().then(console.log);
-  }, [teamId, fetchTechniciansForIncidents]);
+  //useEffect(() => {
+  //  if (!teamId) return;
+  // fetchTechniciansForIncidents().then(console.log);
+  //}, [teamId, fetchTechniciansForIncidents]);
 
   if (meLoading) return <Loading />;
 
@@ -147,7 +147,6 @@ export default function MyTeam() {
       <IncidentTable
         incidents={incidents}
         technicians={technicians}
-        fetchIncidentsForTechnicians={fetchTechniciansForIncidents}
         onAssignTechnicians={async (incidentId, techIds) => {
           const success = await assignTechnicians(incidentId, techIds);
           if (success) refetchTechs?.(true);

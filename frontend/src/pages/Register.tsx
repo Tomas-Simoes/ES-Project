@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Mail, Lock, User, ArrowRight } from "lucide-react";
-import Logo from "../assets/named_logo.png";
+import Logo from "../assets/logo.png";
 import { registerUser, loginUser } from "../services/auth";
 
-
-
 export default function Register() {
-  
   if (localStorage.getItem("token")) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -25,29 +22,32 @@ export default function Register() {
       return;
     }
 
-      try {
-        const reg = await registerUser({ name, email, password }); // reg é JSON
+    try {
+      const reg = await registerUser({ name, email, password }); // reg é JSON
 
-        const token = reg.access_token;
-        if (!token) {
-          alert("Register failed: no token received");
-          return;
-        }
-
-        localStorage.setItem("token", token);
-        navigate("/dashboard", { replace: true });
-      } catch (err: any) {
-        alert(err?.response?.data?.message ?? err?.message ?? "Registration failed");
+      const token = reg.access_token;
+      if (!token) {
+        alert("Register failed: no token received");
+        return;
       }
-  };
 
+      localStorage.setItem("token", token);
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      alert(
+        err?.response?.data?.message ?? err?.message ?? "Registration failed"
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="text-center mb-8">
-          <img src={Logo} alt="Logo" className="w-24 h-24" />{" "}
+          <div className="flex justify-center mb-4">
+            <img src={Logo} alt="Logo" className="w-40 h-40 object-contain" />
+          </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
             IncidentFlow
           </h1>
