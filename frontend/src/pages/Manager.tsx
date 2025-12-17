@@ -11,7 +11,7 @@ export default function Manager() {
     incidents,
     loading: incidentLoading,
     error: incidentError,
-  } = useIncidents(); // TODO: Pass teamId based on logged-in user
+  } = useIncidents("d769f4bc-06b1-4c3a-952d-9aa62682117a"); // TODO: Pass teamId based on logged-in user
 
   const {
     teams,

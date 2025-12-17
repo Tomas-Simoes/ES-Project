@@ -3,7 +3,7 @@ import Topbar from "./components/topbar/Topbar";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Landing";
 import Incidents from "./pages/Incidents";
 import Reports from "./pages/Reports";
 import Logout from "./pages/Logout";
@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import MyIncidents from "./pages/MyIncidents";
 import Manager from "./pages/Manager";
 import Monitoring from "./pages/Monitoring";
+import Admin from "./pages/Admin";
 
 import HomeRedirect from "./pages/HomeRedirect";
 import RequireAuth from "./routes/RequireAuth";
@@ -28,6 +29,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="*" element={<NotFound />} />
 
             {/* Private */}
             <Route element={<RequireAuth />}>
@@ -37,10 +39,8 @@ function App() {
               <Route path="/manager-dashboard" element={<Manager />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/server-monitoring" element={<Monitoring />} />
+              <Route path="/admin" element={<Admin />} />
             </Route>
-
-            {/* Fallback */}
-            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </div>

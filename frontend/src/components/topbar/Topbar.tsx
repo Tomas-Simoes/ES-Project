@@ -64,11 +64,15 @@ function Topbar() {
           <NavLink to="/server-monitoring" className={linkClass}>
             Server Monitoring
           </NavLink>
+
+          <RoleRender allowedRoles={["admin"]}>
+            <NavLink to="/admin" className={linkClass}>
+              Admin
+            </NavLink>
+          </RoleRender>
         </nav>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
-
           <NavLink
             to="/logout"
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-300"

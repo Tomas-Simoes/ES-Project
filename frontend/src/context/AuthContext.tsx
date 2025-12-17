@@ -19,7 +19,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({ role: "viewer" });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const role: Role = "team-leader"; // TODO: Replace with real auth logic
+  const role: Role = "admin"; // TODO: Replace with real auth logic
 
   return (
     <AuthContext.Provider value={{ role }}>{children}</AuthContext.Provider>

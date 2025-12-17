@@ -5,6 +5,7 @@ import TeamMetricsCard from "./TeamMetricsCard";
 import TeamForm from "./TeamForm";
 import { mockTechnicians } from "../../mocks/technicans";
 import { mockTeamLeaders } from "../../mocks/users";
+import type { TeamDTO } from "../../types/team";
 
 const teamsMetrics = [
   {
@@ -79,7 +80,11 @@ const teamsMetrics = [
   },
 ];
 
-export default function TeamsOverview() {
+export default function TeamsOverview({
+  teams,
+}: {
+  teams: Promise<Record<string, TeamDTO[]>>;
+}) {
   const [showForm, setShowForm] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);

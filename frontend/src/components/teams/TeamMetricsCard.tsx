@@ -131,31 +131,6 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
       </div>
 
       {/* Performance Metrics */}
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2">
-          <div className="flex items-center gap-1 mb-0.5">
-            <Clock className="w-3 h-3 text-gray-600 dark:text-gray-400" />
-            <span className="text-xs text-gray-600 dark:text-gray-400">
-              Avg Time
-            </span>
-          </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-            {team.avgResolutionTime}
-          </p>
-        </div>
-
-        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2">
-          <div className="flex items-center gap-1 mb-0.5">
-            <TrendingUp className="w-3 h-3 text-gray-600 dark:text-gray-400" />
-            <span className="text-xs text-gray-600 dark:text-gray-400">
-              Response
-            </span>
-          </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-            {team.responseTime}
-          </p>
-        </div>
-      </div>
 
       {/* Workload Bar */}
       <div className="mb-3">
@@ -180,16 +155,6 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
           />
         </div>
       </div>
-
-      {/* Assignment Button */}
-      {onAssign && (
-        <button
-          onClick={() => onAssign(team.id)}
-          className="w-full py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white text-sm font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
-        >
-          Assign to Team
-        </button>
-      )}
     </div>
   );
 }
