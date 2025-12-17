@@ -7,6 +7,7 @@ import { useIncidents } from "../hooks/incidents/useIncidents";
 import { useMe } from "../hooks/auth/useMe";
 import Error from "./Error";
 import Loading from "./Loading";
+import { useTeamWithMetrics } from "../hooks/teams/useTeamMetrics";
 
 export default function Manager() {
   const { me, refetch: refetchMe } = useMe();
@@ -27,6 +28,10 @@ export default function Manager() {
 
   const { assignTeam, error: assignError } = useAssignTeams();
 
+  const { teamsMetrics, metricsLoading, setTeamMetrics } = useTeamWithMetrics(
+    me?.teamId
+  );
+
   // Garante que temos o usuário
   useEffect(() => {
     if (!me) {
@@ -42,7 +47,8 @@ export default function Manager() {
     }
   };
 
-  if (!me || incidentLoading || teamsLoading) return <Loading />;
+  if (!me || incidentLoading || teamsLoading || metricsLoading)
+    return <Loading />;
 
   if (incidentError || teamsError || assignError)
     return (
@@ -50,7 +56,7 @@ export default function Manager() {
         message={incidentError ?? teamsError ?? assignError ?? undefined}
       />
     );
-
+  console.log(teamsMetrics);
   return (
     <div className="space-y-8">
       <header>
@@ -62,7 +68,7 @@ export default function Manager() {
         </p>
       </header>
 
-      <TeamsOverview />
+      <TeamsOverview teamsMetrics={teamsMetrics} />
 
       <IncidentTable
         incidents={incidents}

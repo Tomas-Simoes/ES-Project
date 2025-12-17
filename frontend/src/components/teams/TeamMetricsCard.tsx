@@ -1,27 +1,16 @@
 // src/components/teams/TeamMetricsCard.tsx
 import { Users, CheckCircle, Clock, TrendingUp, Activity } from "lucide-react";
-
-interface TeamMetrics {
-  id: string;
-  name: string;
-  category: string;
-  totalTechs: number;
-  availableTechs: number;
-  busyTechs: number;
-  openIncidents: number;
-  inProgressIncidents: number;
-  resolvedToday: number;
-  avgResolutionTime: string;
-  workloadPercentage: number;
-  responseTime: string;
-}
+import type { TeamWithMetrics } from "../../types/team"; // Importe a interface correta
 
 interface Props {
-  team: TeamMetrics;
+  team: TeamWithMetrics; // Alterado para a interface correta
   onAssign?: (teamId: string) => void;
 }
 
-export default function TeamMetricsCard({ team, onAssign }: Props) {
+export default function TeamMetricsCard({ team: teamData, onAssign }: Props) {
+  // Desestruturamos para facilitar o acesso
+  const { team, totals } = teamData;
+
   const getWorkloadColor = (percentage: number) => {
     if (percentage >= 80) return "bg-red-500";
     if (percentage >= 60) return "bg-orange-500";
@@ -37,6 +26,7 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
   };
 
   const getAvailabilityStatus = (available: number, total: number) => {
+    if (total === 0) return { text: "No Staff", color: "text-gray-500" };
     const percentage = (available / total) * 100;
     if (percentage >= 50)
       return { text: "Good", color: "text-green-600 dark:text-green-400" };
@@ -45,9 +35,10 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
     return { text: "Low", color: "text-red-600 dark:text-red-400" };
   };
 
+  // Usamos os dados vindos de totals
   const availability = getAvailabilityStatus(
-    team.availableTechs,
-    team.totalTechs
+    totals.availableTechs,
+    totals.totalTechs
   );
 
   return (
@@ -56,10 +47,10 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
       <div className="flex items-start justify-between mb-3">
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-            {team.name}
+            {team.name} {/* Agora acessa TeamBase */}
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {team.category}
+            Team Leader ID: {team.leaderId ? team.leaderId.slice(0, 8) : "None"}
           </p>
         </div>
         <span className={`text-xs font-semibold ${availability.color}`}>
@@ -67,7 +58,7 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
         </span>
       </div>
 
-      {/* Technicians Status */}
+      {/* Technicians Status - Acessando de totals */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2">
           <div className="flex items-center gap-1 mb-0.5">
@@ -77,7 +68,7 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
             </span>
           </div>
           <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
-            {team.totalTechs}
+            {totals.totalTechs}
           </p>
         </div>
 
@@ -89,7 +80,7 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
             </span>
           </div>
           <p className="text-xl font-bold text-green-700 dark:text-green-300">
-            {team.availableTechs}
+            {totals.availableTechs}
           </p>
         </div>
 
@@ -101,23 +92,23 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
             </span>
           </div>
           <p className="text-xl font-bold text-orange-700 dark:text-orange-300">
-            {team.busyTechs}
+            {totals.busyTechs}
           </p>
         </div>
       </div>
 
-      {/* Incidents Overview */}
+      {/* Incidents Overview - Acessando de totals */}
       <div className="space-y-1.5 mb-3">
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600 dark:text-gray-400">Open</span>
           <span className="font-bold text-red-600 dark:text-red-400">
-            {team.openIncidents}
+            {totals.openIncidents}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600 dark:text-gray-400">In Progress</span>
           <span className="font-bold text-blue-600 dark:text-blue-400">
-            {team.inProgressIncidents}
+            {totals.inProgressIncidents}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
@@ -125,14 +116,12 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
             Resolved Today
           </span>
           <span className="font-bold text-green-600 dark:text-green-400">
-            {team.resolvedToday}
+            {totals.resolvedToday}
           </span>
         </div>
       </div>
 
-      {/* Performance Metrics */}
-
-      {/* Workload Bar */}
+      {/* Workload Bar - Usando workloadAvgPercentage de totals */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs text-gray-600 dark:text-gray-400">
@@ -140,18 +129,18 @@ export default function TeamMetricsCard({ team, onAssign }: Props) {
           </span>
           <span
             className={`text-xs font-bold ${getWorkloadTextColor(
-              team.workloadPercentage
+              totals.workloadAvgPercentage
             )}`}
           >
-            {team.workloadPercentage}%
+            {totals.workloadAvgPercentage}%
           </span>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
           <div
             className={`h-full ${getWorkloadColor(
-              team.workloadPercentage
+              totals.workloadAvgPercentage
             )} transition-all duration-500 rounded-full`}
-            style={{ width: `${team.workloadPercentage}%` }}
+            style={{ width: `${totals.workloadAvgPercentage}%` }}
           />
         </div>
       </div>

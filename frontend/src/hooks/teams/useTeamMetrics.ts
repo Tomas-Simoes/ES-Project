@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
-import type { TechnicianWithMetrics } from "../../types/user";
 import { mockTechniciansMetrics } from "../../mocks/technicans";
+import type { TeamWithMetrics } from "../../types/team";
 
-export function useTechniciansWithMetrics(teamId?: string) {
-  const [technicians, setTechnicians] = useState<TechnicianWithMetrics[]>([]);
+export function useTeamWithMetrics(teamId?: string) {
+  const [teamsMetrics, setTeamMetrics] = useState<TeamWithMetrics[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // first load
   const [refreshing, setRefreshing] = useState<boolean>(false); // silent refresh
   const [error, setError] = useState<string | null>(null);
@@ -22,18 +22,13 @@ export function useTechniciansWithMetrics(teamId?: string) {
 
         setError(null);
         console.log("yyy" + teamId);
-        const res = await axios.get<TechnicianWithMetrics[]>(
-          "/api/technician/metrics",
-          {
-            params: teamId ? { teamId } : undefined,
-          }
+        const res = await axios.get<TeamWithMetrics[]>(
+          `/api/teams/all/metrics`
         );
 
         console.log("Fetched technicians metrics:", res.data);
 
-        setTechnicians(
-          Array.isArray(res.data) ? res.data : mockTechniciansMetrics
-        );
+        setTeamMetrics(res.data);
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           console.error(
@@ -53,8 +48,6 @@ export function useTechniciansWithMetrics(teamId?: string) {
           console.error("Unknown error", err);
           setError("Unknown error fetching technicians metrics");
         }
-
-        setTechnicians(mockTechniciansMetrics);
       } finally {
         if (silent && !isFirstLoad.current) {
           setRefreshing(false);
@@ -72,11 +65,11 @@ export function useTechniciansWithMetrics(teamId?: string) {
   }, [fetchData]);
 
   return {
-    technicians,
+    teamsMetrics,
     loading,
     refreshing, // opcional para spinner pequeno
     error,
     refetch: fetchData, // refetch(true)
-    setTechnicians,
+    setTeamMetrics,
   };
 }

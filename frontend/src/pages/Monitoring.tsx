@@ -187,12 +187,6 @@ export default function ObservabilityDashboard() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <Kpi
-                    label="Active Users"
-                    value={rumMetrics.users}
-                    icon={Globe}
-                    accent="text-blue-400"
-                  />
-                  <Kpi
                     label="LCP"
                     value={rumMetrics.lcp}
                     icon={Clock}
@@ -222,9 +216,7 @@ export default function ObservabilityDashboard() {
             <Card>
               <div className="flex items-center gap-2 mb-4">
                 <Server className="w-5 h-5 text-green-400" />
-                <h2 className="text-xl font-semibold">
-                  Backend Performance (APM)
-                </h2>
+                <h2 className="text-xl font-semibold">Backend Performance</h2>
                 <span className="ml-auto text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded">
                   Live from Backend
                 </span>

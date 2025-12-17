@@ -55,12 +55,6 @@ function Topbar() {
             </NavLink>
           </RoleRender>
 
-          <RoleRender allowedRoles={["ADMIN", "MANAGER"]}>
-            <NavLink to="/reports" className={linkClass}>
-              Reports
-            </NavLink>
-          </RoleRender>
-
           <RoleRender allowedRoles={["ADMIN"]}>
             <NavLink to="/server-monitoring" className={linkClass}>
               Server Monitoring
