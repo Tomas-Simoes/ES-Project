@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Mail, Lock, ArrowRight } from "lucide-react";
-import Logo from "../assets/named_logo.png";
+import Logo from "../assets/logo.png";
 import { loginUser } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
 
@@ -54,7 +54,7 @@ export default function Login() {
         {/* Logo Section */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img src={Logo} alt="Logo" className="w-24 h-24 object-contain" />
+            <img src={Logo} alt="Logo" className="w-40 h-40 object-contain" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
             IncidentFlow
