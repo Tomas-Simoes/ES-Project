@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { TeamsController } from './teams.controller';
 import { TeamsService } from './teams.service';
 import { TechniciansModule } from '../technicians/technicians.module';
+import { IncidentsModule } from '../incidents/incidents.module';
 
 @Module({
   controllers: [TeamsController],
-  imports: [TechniciansModule],
+  imports: [TechniciansModule, IncidentsModule],
   providers: [TeamsService],
   exports: [TeamsService],
 })

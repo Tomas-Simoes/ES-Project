@@ -1,13 +1,15 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { TeamsService } from './teams.service';
-import { AddRemoveTechnicianDto, SetTeamLeaderDto, TeamUpsertDto } from '../common/dto';
+import { AddRemoveTechnicianDto, SetTeamLeaderDto, TeamUpsertDto, CreateIncidentDto} from '../common/dto';
 import { TechniciansService } from '../technicians/technicians.service';
+import { IncidentsService } from '../incidents/incidents.service';
 
 @Controller('api/teams')
 export class TeamsController {
   constructor(
     private readonly service: TeamsService,
-    private readonly techniciansService: TechniciansService
+    private readonly techniciansService: TechniciansService,
+    private readonly incidentsService: IncidentsService
   ) {}
 
   @Get()
@@ -54,6 +56,24 @@ export class TeamsController {
   incidents(@Param('id') id: string, @Query() q: any) {
     return this.service.listIncidents(id, q);
   }
+
+
+  @Post(':teamId/incidents')
+  createIncidentForTeam(
+    @Param('teamId') teamId: string,
+    @Body() dto: CreateIncidentDto,
+  ) {
+    return this.incidentsService.createForTeam(teamId, dto);
+  }
+
+  @Post(':teamId/incidents/:incidentId')
+  addIncidentToTeam(
+    @Param('teamId') teamId: string,
+    @Param('incidentId') incidentId: string,
+  ) {
+    return this.incidentsService.addIncidentToTeam(teamId, incidentId);
+  }
+  
 
   @Get(':teamId/metrics')
   metricsForTeam(@Param('teamId') teamId: string, @Query() q: any) {

@@ -5,5 +5,6 @@ import { IncidentsService } from './incidents.service';
 @Module({
   controllers: [IncidentsController],
   providers: [IncidentsService],
+  exports: [IncidentsService]
 })
 export class IncidentsModule {}

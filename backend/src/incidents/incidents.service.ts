@@ -146,6 +146,73 @@ export class IncidentsService {
     };
   }
 
+async createForTeam(teamId: string, dto: CreateIncidentDto) {
+  const created = await this.prisma.incident.create({
+    data: {
+      teamId,
+      title: dto.title,
+      description: dto.description ?? '',
+      status: statusToDb(dto.status) as any,
+      priority: priorityToDb(dto.priority) as any,
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      priority: true,
+      createdAt: true,
+      ownerId: true,
+      teamId: true,
+      owner: { select: { id: true, name: true, email: true } },
+      team: { select: { id: true, name: true, leaderId: true } },
+    },
+  });
+
+  return {
+    ...created,
+    status: statusToFrontend(created.status),
+    priority: priorityToFrontend(created.priority),
+  };
+  }
+
+  async addIncidentToTeam(teamId: string, incidentId: string) {
+  const incident = await this.prisma.incident.findUnique({
+    where: { id: incidentId },
+    select: { id: true },
+  });
+
+  if (!incident) {
+    throw new Error('INCIDENT_NOT_FOUND');
+  }
+
+  const updated = await this.prisma.incident.update({
+    where: { id: incidentId },
+    data: {
+      teamId,
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      priority: true,
+      createdAt: true,
+      ownerId: true,
+      teamId: true,
+      owner: { select: { id: true, name: true, email: true } },
+      team: { select: { id: true, name: true, leaderId: true } },
+    },
+  });
+
+  return {
+    ...updated,
+    status: statusToFrontend(updated.status),
+    priority: priorityToFrontend(updated.priority),
+  };
+  }
+
+
   async assignTechnicians(incidentId: string, technicianIds: string[]) {
     const incident = await this.prisma.incident.findUnique({
       where: { id: incidentId },

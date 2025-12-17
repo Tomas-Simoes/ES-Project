@@ -53,7 +53,9 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="text-center mb-8">
-          <img src={Logo} alt="Logo" className="w-24 h-24" />{" "}
+          <div className="flex justify-center mb-4">
+            <img src={Logo} alt="Logo" className="w-24 h-24 object-contain" />
+          </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
             IncidentFlow
           </h1>
