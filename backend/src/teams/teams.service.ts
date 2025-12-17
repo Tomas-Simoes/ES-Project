@@ -81,16 +81,28 @@ export class TeamsService {
   }
 
   async setLeader(teamId: string, leaderId: string) {
-    // (ideal) validar que leader existe
-    const leader = await this.prisma.user.findUnique({ where: { id: leaderId }, select: { id: true } });
-    if (!leader) throw new Error('LEADER_NOT_FOUND');
+  const leader = await this.prisma.user.findUnique({
+    where: { id: leaderId },
+    select: { id: true, role: true, teamId: true },
+  });
 
-    return this.prisma.team.update({
+  if (!leader) throw new Error('LEADER_NOT_FOUND');
+  if (leader.role !== 'TECHNICIAN') throw new Error('LEADER_MUST_BE_TECHNICIAN');
+
+  return this.prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: leaderId },
+      data: { teamId },
+    });
+
+    return tx.team.update({
       where: { id: teamId },
       data: { leaderId },
       select: { id: true, name: true, leaderId: true },
     });
-  }
+  });
+}
+
 
   async addTechnician(teamId: string, technicianId: string) {
     const tech = await this.prisma.user.findUnique({
